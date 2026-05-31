@@ -88,7 +88,7 @@ create table public.payments (
   user_id uuid references public.users(id) on delete cascade not null,
   amount numeric(15, 2) not null,
   paid_at timestamp with time zone default timezone('utc'::text, now()) not null,
-  receipt_image text, -- Stores base64 encoded image
+  receipt_image text, -- Stores public URL of uploaded storage file
   notes text
 );
 
@@ -152,3 +152,21 @@ $$ language plpgsql security definer;
 create or replace trigger on_auth_user_created
   after insert on auth.users
   for each row execute procedure public.handle_new_user();
+
+-- 7. Supabase Storage Setup for Payment Proofs
+insert into storage.buckets (id, name, public)
+values ('payment-proofs', 'payment-proofs', true)
+on conflict (id) do nothing;
+
+create policy "Users can upload their own payment proofs"
+  on storage.objects for insert
+  with check (bucket_id = 'payment-proofs' and (auth.uid())::text = (storage.foldername(name))[1]);
+
+create policy "Users can view their own payment proofs"
+  on storage.objects for select
+  using (bucket_id = 'payment-proofs' and (auth.uid())::text = (storage.foldername(name))[1]);
+
+create policy "Users can delete their own payment proofs"
+  on storage.objects for delete
+  using (bucket_id = 'payment-proofs' and (auth.uid())::text = (storage.foldername(name))[1]);
+
