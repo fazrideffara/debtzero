@@ -96,28 +96,6 @@ export const usePayments = (debtId?: string) => {
 
       if (paymentErr) throw paymentErr
 
-      // 4. Recalculate remaining amount for the corresponding debt
-      const { data: debt, error: debtFetchErr } = await supabase
-        .from('debts')
-        .select('remaining_amount')
-        .eq('id', activeDebtId)
-        .single()
-
-      if (debtFetchErr) throw debtFetchErr
-
-      const newRemaining = Math.max(0, debt.remaining_amount - amount)
-      const status = newRemaining <= 0 ? 'completed' : 'active'
-
-      const { error: debtUpdateErr } = await supabase
-        .from('debts')
-        .update({
-          remaining_amount: newRemaining,
-          status,
-        })
-        .eq('id', activeDebtId)
-
-      if (debtUpdateErr) throw debtUpdateErr
-
       // Update local state if the hook instance is linked to this specific debt
       if (activeDebtId === debtId) {
         setPayments((prev) => [paymentRecord, ...prev])
@@ -132,7 +110,7 @@ export const usePayments = (debtId?: string) => {
     }
   }
 
-  const deletePayment = async (paymentId: string, amountToRestore: number, targetDebtId?: string) => {
+  const deletePayment = async (paymentId: string, targetDebtId?: string) => {
     const activeDebtId = targetDebtId || debtId
     if (!activeDebtId) throw new Error('No target debt ID provided')
 
@@ -147,28 +125,6 @@ export const usePayments = (debtId?: string) => {
 
       if (deleteErr) throw deleteErr
 
-      // 2. Restore remaining_amount in the debt
-      const { data: debt, error: debtFetchErr } = await supabase
-        .from('debts')
-        .select('remaining_amount')
-        .eq('id', activeDebtId)
-        .single()
-
-      if (debtFetchErr) throw debtFetchErr
-
-      const newRemaining = debt.remaining_amount + amountToRestore
-      const status = 'active' // Restoring payment makes it active again
-
-      const { error: debtUpdateErr } = await supabase
-        .from('debts')
-        .update({
-          remaining_amount: newRemaining,
-          status,
-        })
-        .eq('id', activeDebtId)
-
-      if (debtUpdateErr) throw debtUpdateErr
-
       if (activeDebtId === debtId) {
         setPayments((prev) => prev.filter((p) => p.id !== paymentId))
       }
@@ -179,6 +135,7 @@ export const usePayments = (debtId?: string) => {
       setLoading(false)
     }
   }
+
 
   return {
     payments,

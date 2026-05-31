@@ -170,3 +170,45 @@ create policy "Users can delete their own payment proofs"
   on storage.objects for delete
   using (bucket_id = 'payment-proofs' and (auth.uid())::text = (storage.foldername(name))[1]);
 
+
+-- 8. Trigger to automatically sync remaining_amount & status on debts when payment occurs
+create or replace function public.handle_payment_change()
+returns trigger as $$
+declare
+  v_debt_id uuid;
+  v_diff numeric(15, 2);
+begin
+  if (TG_OP = 'INSERT') then
+    v_debt_id := new.debt_id;
+    v_diff := -new.amount;
+  elsif (TG_OP = 'DELETE') then
+    v_debt_id := old.debt_id;
+    v_diff := old.amount;
+  elsif (TG_OP = 'UPDATE') then
+    v_debt_id := new.debt_id;
+    v_diff := old.amount - new.amount;
+  end if;
+
+  -- Update the remaining amount and status of the corresponding debt
+  update public.debts
+  set 
+    remaining_amount = greatest(0.00, remaining_amount + v_diff),
+    status = case 
+      when greatest(0.00, remaining_amount + v_diff) <= 0.00 then 'completed'
+      else 'active'
+    end
+  where id = v_debt_id;
+
+  if (TG_OP = 'DELETE') then
+    return old;
+  else
+    return new;
+  end if;
+end;
+$$ language plpgsql security definer;
+
+create or replace trigger on_payment_change
+  after insert or update or delete on public.payments
+  for each row execute procedure public.handle_payment_change();
+
+
