@@ -1,0 +1,65 @@
+@import "tailwindcss";
+
+@theme {
+  --font-sans: "Outfit", "Inter", system-ui, -apple-system, sans-serif;
+  --font-heading: "Outfit", system-ui, -apple-system, sans-serif;
+  
+  /* Modern premium color scheme presets */
+  --color-brand-primary: #aa3bff;
+  --color-brand-secondary: #c084fc;
+  --color-brand-dark: #0f172a;
+}
+
+/* Custom scrollbar styling */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: rgba(15, 23, 42, 0.6);
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(170, 59, 255, 0.3);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(170, 59, 255, 0.6);
+}
+
+/* Reusable premium micro-interactions and glassmorphism styling */
+@utility glass-panel {
+  background-color: rgba(15, 23, 42, 0.45);
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+@utility glass-card {
+  background-color: rgba(30, 41, 59, 0.45);
+  backdrop-filter: blur(16px);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+@utility glass-card-hover {
+  &:hover {
+    transform: translateY(-2px);
+    border-color: rgba(170, 59, 255, 0.3);
+    box-shadow: 0 12px 40px 0 rgba(170, 59, 255, 0.15);
+  }
+}
+
+@utility text-gradient-purple {
+  background: linear-gradient(135deg, #e9d5ff 0%, #c084fc 50%, #a855f7 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+@utility text-gradient-rose {
+  background: linear-gradient(135deg, #fecdd3 0%, #fda4af 50%, #f43f5e 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
