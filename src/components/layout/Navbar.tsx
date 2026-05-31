@@ -1,6 +1,6 @@
 import React from 'react'
 import { LogOut, User, Bell, ShieldAlert } from 'lucide-react'
-import { supabase } from '../../lib/supabase'
+
 
 interface NavbarProps {
   userEmail?: string
