@@ -2,7 +2,7 @@ import React, { useState } from 'react'
 import { useDebts } from '../hooks/useDebts'
 import { formatRupiah, formatDateIndo } from '../utils/formatter'
 import { DebtDetailModal } from '../components/debt/DebtDetailModal'
-
+import { ScanDebtModal } from '../components/debt/ScanDebtModal'
 import { determineRiskColor } from '../utils/calculator'
 import { 
   CreditCard, 
@@ -11,14 +11,16 @@ import {
   Filter, 
   Calendar, 
   AlertTriangle,
-  Info
+  Info,
+  Sparkles
 } from 'lucide-react'
-
 
 export const Debts: React.FC = () => {
   const { debts, loading, error, refetch, addDebt, deleteDebt } = useDebts()
   const [selectedDebt, setSelectedDebt] = useState<any | null>(null)
   const [isModalOpen, setIsModalOpen] = useState(false)
+  const [isScanModalOpen, setIsScanModalOpen] = useState(false)
+
   const [filterType, setFilterType] = useState<string>('all')
   const [filterStatus, setFilterStatus] = useState<string>('active')
 
@@ -159,17 +161,28 @@ export const Debts: React.FC = () => {
             Pantau dan kelola rincian kewajiban cicilan, gadai, dan personal Anda di sini.
           </p>
         </div>
-        <button
-          id="btn-add-debt"
-          onClick={() => {
-            handleTypeChange('cicilan')
-            setIsModalOpen(true)
-          }}
-          className="flex items-center justify-center gap-2 px-5 py-3 rounded-xl bg-purple-600 hover:bg-purple-700 text-white font-medium text-sm transition-colors shadow-lg shadow-purple-600/10 cursor-pointer"
-        >
-          <Plus size={16} />
-          <span>Tambah Hutang</span>
-        </button>
+        <div className="flex flex-wrap gap-3">
+          <button
+            id="btn-scan-debt"
+            onClick={() => setIsScanModalOpen(true)}
+            className="flex items-center justify-center gap-2 px-5 py-3 rounded-xl bg-purple-600/10 border border-purple-500/30 hover:bg-purple-600/20 text-purple-400 font-medium text-sm transition-colors cursor-pointer"
+          >
+            <Sparkles size={16} />
+            <span>Scan Tagihan (AI)</span>
+          </button>
+          <button
+            id="btn-add-debt"
+            onClick={() => {
+              handleTypeChange('cicilan')
+              setIsModalOpen(true)
+            }}
+            className="flex items-center justify-center gap-2 px-5 py-3 rounded-xl bg-purple-600 hover:bg-purple-700 text-white font-medium text-sm transition-colors shadow-lg shadow-purple-600/10 cursor-pointer"
+          >
+            <Plus size={16} />
+            <span>Tambah Hutang</span>
+          </button>
+        </div>
+
       </div>
 
       {/* Database Fetch Error */}
@@ -514,7 +527,16 @@ export const Debts: React.FC = () => {
           onUpdate={refetch}
         />
       )}
+
+      {/* Scan OCR Modal */}
+      {isScanModalOpen && (
+        <ScanDebtModal
+          onClose={() => setIsScanModalOpen(false)}
+          onSuccess={refetch}
+        />
+      )}
     </div>
   )
 }
+
 
