@@ -1,6 +1,7 @@
 import React, { useState } from 'react'
 import { useDebts } from '../hooks/useDebts'
 import { formatRupiah, formatDateIndo } from '../utils/formatter'
+import { DebtDetailModal } from '../components/debt/DebtDetailModal'
 
 import { determineRiskColor } from '../utils/calculator'
 import { 
@@ -15,7 +16,8 @@ import {
 
 
 export const Debts: React.FC = () => {
-  const { debts, loading, error, addDebt, deleteDebt } = useDebts()
+  const { debts, loading, error, refetch, addDebt, deleteDebt } = useDebts()
+  const [selectedDebt, setSelectedDebt] = useState<any | null>(null)
   const [isModalOpen, setIsModalOpen] = useState(false)
   const [filterType, setFilterType] = useState<string>('all')
   const [filterStatus, setFilterStatus] = useState<string>('active')
@@ -241,8 +243,14 @@ export const Debts: React.FC = () => {
             return (
               <div 
                 key={debt.id} 
-                className={`glass-card p-6 rounded-2xl border border-slate-800/80 shadow-md flex flex-col justify-between hover:border-slate-700/60 transition-all ${riskBorderClass}`}
+                onClick={(e) => {
+                  // Do not open details if user clicks the delete button
+                  if ((e.target as HTMLElement).closest('button')) return
+                  setSelectedDebt(debt)
+                }}
+                className={`glass-card glass-card-hover p-6 rounded-2xl border border-slate-800/80 shadow-md flex flex-col justify-between transition-all cursor-pointer ${riskBorderClass}`}
               >
+
                 <div>
                   {/* Type Badge & Actions */}
                   <div className="flex items-center justify-between mb-4">
@@ -496,6 +504,17 @@ export const Debts: React.FC = () => {
           </div>
         </div>
       )}
+
+
+      {/* Debt Detail & Payment Modal */}
+      {selectedDebt && (
+        <DebtDetailModal
+          debt={selectedDebt}
+          onClose={() => setSelectedDebt(null)}
+          onUpdate={refetch}
+        />
+      )}
     </div>
   )
 }
+
