@@ -9,15 +9,39 @@ import {
   ArrowRight, 
   ArrowLeft, 
   Calculator, 
-  TrendingDown
+  TrendingDown,
+  Eye,
+  EyeOff
 } from 'lucide-react'
 import { supabase } from '../lib/supabase'
 import { formatRupiah } from '../utils/formatter'
 import { ShieldLogo } from '../components/layout/ShieldLogo'
 
+const storeOtpInRedisMock = (email: string, otp: string) => {
+  const expiresAt = Date.now() + 5 * 60 * 1000 // 5 minutes TTL
+  localStorage.setItem(`otp:${email}`, JSON.stringify({ otp, expiresAt }))
+}
+
+const verifyOtpInRedisMock = (email: string, otp: string): { success: boolean; message: string } => {
+  const dataStr = localStorage.getItem(`otp:${email}`)
+  if (!dataStr) {
+    return { success: false, message: 'Kode OTP tidak ditemukan atau belum dikirim.' }
+  }
+  const { otp: storedOtp, expiresAt } = JSON.parse(dataStr)
+  if (Date.now() > expiresAt) {
+    localStorage.removeItem(`otp:${email}`)
+    return { success: false, message: 'Kode OTP sudah kadaluwarsa (TTL 5 menit habis).' }
+  }
+  if (storedOtp !== otp) {
+    return { success: false, message: 'Kode OTP salah, silakan cek kembali.' }
+  }
+  localStorage.removeItem(`otp:${email}`)
+  return { success: true, message: 'OTP terverifikasi!' }
+}
+
 export const Login: React.FC = () => {
   // Navigation & Auth Form States
-  const [step, setStep] = useState<'hero' | 'quiz' | 'calculator' | 'auth'>('hero')
+  const [step, setStep] = useState<'hero' | 'quiz' | 'calculator' | 'auth' | 'forgot' | 'otp'>('hero')
   const [isRegister, setIsRegister] = useState(false)
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
@@ -25,7 +49,15 @@ export const Login: React.FC = () => {
   const [loading, setLoading] = useState(false)
   const [errorMessage, setErrorMessage] = useState('')
   const [successMessage, setSuccessMessage] = useState('')
+  
+  // Security additions
+  const [showPassword, setShowPassword] = useState(false)
+  const [forgotEmail, setForgotEmail] = useState('')
+  const [enteredOtp, setEnteredOtp] = useState('')
+  const [otpExpiredTime, setOtpExpiredTime] = useState<number | null>(null)
+  
   const navigate = useNavigate()
+
 
   // Quiz States
   const [quizIndex, setQuizIndex] = useState(0)
@@ -84,42 +116,105 @@ export const Login: React.FC = () => {
     }
   }
 
+  const handleRegisterInitiate = (e: React.FormEvent) => {
+    e.preventDefault()
+    setErrorMessage('')
+    setSuccessMessage('')
+
+    if (!email || !password || !fullName) {
+      setErrorMessage('Isi semua field pendaftaran ya, Bos!')
+      return
+    }
+
+    if (password.length < 6) {
+      setErrorMessage('Kata sandi minimal 6 karakter ya!')
+      return
+    }
+
+    // Generate 6-digit OTP code
+    const generatedOtp = Math.floor(100000 + Math.random() * 900000).toString()
+    
+    // Store in mock Redis (TTL 5 mins)
+    storeOtpInRedisMock(email, generatedOtp)
+    setOtpExpiredTime(Date.now() + 5 * 60 * 1000)
+
+    setSuccessMessage(`[Simulasi Redis Backend TTL 5m] Kode OTP berhasil dikirim ke ${email}. Gunakan kode: ${generatedOtp}`);
+    setStep('otp')
+  }
+
+  const handleVerifyOtpAndRegister = async (e: React.FormEvent) => {
+    e.preventDefault()
+    setLoading(true)
+    setErrorMessage('')
+
+    const verification = verifyOtpInRedisMock(email, enteredOtp)
+    if (!verification.success) {
+      setErrorMessage(verification.message)
+      setLoading(false)
+      return
+    }
+
+    try {
+      const { error } = await supabase.auth.signUp({
+        email,
+        password,
+        options: {
+          data: {
+            full_name: fullName,
+          },
+        },
+      })
+      if (error) throw error
+
+      setSuccessMessage('Pendaftaran terverifikasi! Akun kamu berhasil dibuat, Bos. Silakan login di bawah ini.')
+      setStep('auth')
+      setIsRegister(false)
+    } catch (err: any) {
+      setErrorMessage(err.message || 'Gagal mendaftarkan akun.')
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  const handleForgotPassword = async (e: React.FormEvent) => {
+    e.preventDefault()
+    setLoading(true)
+    setErrorMessage('')
+    setSuccessMessage('')
+
+    try {
+      const { error } = await supabase.auth.resetPasswordForEmail(forgotEmail, {
+        redirectTo: window.location.origin + '/settings',
+      })
+      if (error) throw error
+      setSuccessMessage('Link reset kata sandi telah dikirim ke email kamu, Bos!')
+    } catch (err: any) {
+      setErrorMessage(err.message || 'Gagal mengirim link reset password.')
+    } finally {
+      setLoading(false)
+    }
+  }
+
   const handleAuth = async (e: React.FormEvent) => {
     e.preventDefault()
     setLoading(true)
     setErrorMessage('')
 
     try {
-      if (isRegister) {
-        // Register flow
-        const { error } = await supabase.auth.signUp({
-          email,
-          password,
-          options: {
-            data: {
-              full_name: fullName,
-            },
-          },
-        })
-        if (error) throw error
-        
-        setSuccessMessage('Registrasi berhasil! Silakan periksa kotak masuk email Anda untuk verifikasi link.')
-        setIsRegister(false)
-      } else {
-        // Login flow
-        const { error } = await supabase.auth.signInWithPassword({
-          email,
-          password,
-        })
-        if (error) throw error
-        navigate('/')
-      }
+      // Login flow
+      const { error } = await supabase.auth.signInWithPassword({
+        email,
+        password,
+      })
+      if (error) throw error
+      navigate('/')
     } catch (err: any) {
       setErrorMessage(err.message || 'Terjadi kesalahan saat autentikasi.')
     } finally {
       setLoading(false)
     }
   }
+
 
   // Calculate Payoff Months
   const totalDebt = parseFloat(calcDebt) || 0
@@ -358,7 +453,7 @@ export const Login: React.FC = () => {
             )}
 
             {/* Form */}
-            <form onSubmit={handleAuth} className="space-y-4">
+            <form onSubmit={isRegister ? handleRegisterInitiate : handleAuth} className="space-y-4">
               {isRegister && (
                 <div className="space-y-1.5">
                   <label className="text-xs font-semibold text-slate-500 uppercase tracking-wider">Nama Lengkap</label>
@@ -402,15 +497,38 @@ export const Login: React.FC = () => {
                     <Lock size={16} />
                   </span>
                   <input
-                    type="password"
+                    type={showPassword ? 'text' : 'password'}
                     required
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
-                    className="w-full bg-white border border-slate-200 rounded-xl pl-11 pr-4 py-3 text-slate-800 placeholder-slate-400 focus:outline-none focus:border-emerald-500 transition-colors text-sm"
+                    className="w-full bg-white border border-slate-200 rounded-xl pl-11 pr-12 py-3 text-slate-800 placeholder-slate-400 focus:outline-none focus:border-emerald-500 transition-colors text-sm"
                     placeholder="••••••••"
                   />
+                  <button
+                    type="button"
+                    onClick={() => setShowPassword(!showPassword)}
+                    className="absolute right-4 top-3 text-slate-400 hover:text-slate-650 focus:outline-none cursor-pointer"
+                  >
+                    {showPassword ? <EyeOff size={16} /> : <Eye size={16} />}
+                  </button>
                 </div>
               </div>
+
+              {!isRegister && (
+                <div className="flex justify-end">
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setStep('forgot');
+                      setErrorMessage('');
+                      setSuccessMessage('');
+                    }}
+                    className="text-slate-450 hover:text-slate-700 text-xs font-semibold cursor-pointer"
+                  >
+                    Lupa kata sandi?
+                  </button>
+                </div>
+              )}
 
               <button
                 type="submit"
@@ -423,7 +541,7 @@ export const Login: React.FC = () => {
                     Sedang memproses...
                   </span>
                 ) : (
-                  isRegister ? 'Daftar Sekarang' : 'Masuk Aplikasi'
+                  isRegister ? 'Kirim Kode OTP' : 'Masuk Aplikasi'
                 )}
               </button>
             </form>
@@ -436,6 +554,7 @@ export const Login: React.FC = () => {
                   onClick={() => {
                     setIsRegister(!isRegister)
                     setErrorMessage('')
+                    setSuccessMessage('')
                   }}
                   className="text-emerald-600 hover:text-emerald-500 font-bold hover:underline transition-all"
                 >
@@ -446,7 +565,145 @@ export const Login: React.FC = () => {
           </div>
         )}
 
+        {/* FORGOT PASSWORD STEP */}
+        {step === 'forgot' && (
+          <div className="space-y-6">
+            <div className="text-center">
+              <div className="inline-flex p-3 rounded-2xl bg-emerald-50 border border-emerald-250 text-emerald-600 mb-3">
+                <ShieldLogo size={28} />
+              </div>
+              <h1 className="text-2xl font-extrabold text-slate-800 tracking-tight">Lupa Kata Sandi</h1>
+              <p className="text-slate-500 text-xs mt-1.5 uppercase font-bold tracking-wider">BebasHutang Security System</p>
+            </div>
+
+            {errorMessage && (
+              <div className="p-4 rounded-xl bg-rose-500/10 border border-rose-500/25 text-rose-600 text-xs flex items-start gap-2.5">
+                <AlertCircle size={18} className="shrink-0 mt-0.5" />
+                <span>{errorMessage}</span>
+              </div>
+            )}
+
+            {successMessage && (
+              <div className="p-4 rounded-xl bg-emerald-500/10 border border-emerald-500/25 text-emerald-600 text-xs flex items-start gap-2.5">
+                <CheckCircle2 size={18} className="shrink-0 mt-0.5" />
+                <span>{successMessage}</span>
+              </div>
+            )}
+
+            <form onSubmit={handleForgotPassword} className="space-y-4">
+              <div className="space-y-1.5">
+                <label className="text-xs font-semibold text-slate-500 uppercase tracking-wider">Masukkan Alamat Email Anda</label>
+                <div className="relative">
+                  <span className="absolute left-4 top-3.5 text-slate-400">
+                    <Mail size={16} />
+                  </span>
+                  <input
+                    type="email"
+                    required
+                    value={forgotEmail}
+                    onChange={(e) => setForgotEmail(e.target.value)}
+                    className="w-full bg-white border border-slate-200 rounded-xl pl-11 pr-4 py-3 text-slate-800 placeholder-slate-400 focus:outline-none focus:border-emerald-500 transition-colors text-sm"
+                    placeholder="nama@email.com"
+                  />
+                </div>
+              </div>
+
+              <button
+                type="submit"
+                disabled={loading}
+                className="w-full py-3.5 bg-emerald-600 hover:bg-emerald-700 disabled:opacity-50 text-white font-medium rounded-xl mt-6 transition-colors text-sm cursor-pointer"
+              >
+                {loading ? 'Mengirim link...' : 'Kirim Link Reset Password'}
+              </button>
+            </form>
+
+            <div className="text-center pt-2">
+              <button
+                onClick={() => {
+                  setStep('auth');
+                  setForgotEmail('');
+                  setErrorMessage('');
+                  setSuccessMessage('');
+                }}
+                className="text-emerald-600 hover:text-emerald-500 font-bold hover:underline transition-all text-xs"
+              >
+                Kembali ke halaman Login
+              </button>
+            </div>
+          </div>
+        )}
+
+        {/* OTP VERIFICATION STEP */}
+        {step === 'otp' && (
+          <div className="space-y-6">
+            <div className="text-center">
+              <div className="inline-flex p-3 rounded-2xl bg-emerald-50 border border-emerald-250 text-emerald-600 mb-3">
+                <Lock size={28} />
+              </div>
+              <h1 className="text-2xl font-extrabold text-slate-800 tracking-tight">Verifikasi OTP Email</h1>
+              <p className="text-slate-500 text-xs mt-1.5 uppercase font-bold tracking-wider">Simulasi Redis Cache (TTL 5 Menit)</p>
+            </div>
+
+            {errorMessage && (
+              <div className="p-4 rounded-xl bg-rose-500/10 border border-rose-500/25 text-rose-600 text-xs flex items-start gap-2.5">
+                <AlertCircle size={18} className="shrink-0 mt-0.5" />
+                <span>{errorMessage}</span>
+              </div>
+            )}
+
+            {successMessage && (
+              <div className="p-4 rounded-xl bg-emerald-500/10 border border-emerald-500/25 text-emerald-650 text-xs">
+                <span>{successMessage}</span>
+              </div>
+            )}
+
+            <form onSubmit={handleVerifyOtpAndRegister} className="space-y-4">
+              <div className="space-y-2">
+                <label className="text-xs font-semibold text-slate-500 uppercase tracking-wider block text-center">Masukkan 6 Digit Kode OTP</label>
+                <input
+                  type="text"
+                  maxLength={6}
+                  required
+                  value={enteredOtp}
+                  onChange={(e) => setEnteredOtp(e.target.value)}
+                  className="w-full bg-white border border-slate-200 rounded-xl px-4 py-3 text-slate-850 text-center text-lg tracking-widest font-extrabold focus:outline-none focus:border-emerald-500"
+                  placeholder="------"
+                />
+                {otpExpiredTime && (
+                  <p className="text-[10px] text-slate-400 text-center">
+                    Kode ini berlaku sampai dengan {new Date(otpExpiredTime).toLocaleTimeString('id-ID')} (TTL 5 Menit)
+                  </p>
+                )}
+              </div>
+
+
+              <button
+                type="submit"
+                disabled={loading}
+                className="w-full py-3.5 bg-emerald-600 hover:bg-emerald-700 disabled:opacity-50 text-white font-medium rounded-xl mt-4 transition-colors text-sm cursor-pointer"
+              >
+                {loading ? 'Verifikasi...' : 'Verifikasi & Buat Akun'}
+              </button>
+            </form>
+
+            <div className="text-center pt-2">
+              <button
+                type="button"
+                onClick={() => {
+                  setStep('auth');
+                  setErrorMessage('');
+                  setSuccessMessage('');
+                }}
+                className="text-slate-500 hover:text-slate-800 transition-colors text-xs font-bold"
+              >
+                Batal Pendaftaran
+              </button>
+            </div>
+          </div>
+        )}
+
       </div>
     </div>
   )
 }
+

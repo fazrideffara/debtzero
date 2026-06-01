@@ -481,15 +481,15 @@ export const Dashboard: React.FC = () => {
                 <button
                   key={dateStr}
                   onClick={() => hasDebts && setSelectedCalendarDate(dateStr)}
-                  className={`aspect-square rounded-2xl flex flex-col items-center justify-between p-2 relative transition-all border ${
+                  className={`aspect-square rounded-xl sm:rounded-2xl flex flex-col items-center justify-between p-1 sm:p-2 relative transition-all border ${
                     isSelected ? 'border-emerald-500 bg-emerald-50 text-emerald-800 font-extrabold ring-2 ring-emerald-500/20' :
                     hasDebts ? 'border-slate-200 hover:border-emerald-500 hover:bg-emerald-50/20 text-slate-800 font-bold cursor-pointer shadow-sm' :
                     'border-transparent text-slate-400 hover:bg-slate-100/50'
                   }`}
                 >
-                  <span className="text-[11px]">{day.getDate()}</span>
+                  <span className="text-[9px] sm:text-[11px]">{day.getDate()}</span>
                   {hasDebts && (
-                    <span className={`w-1.5 h-1.5 rounded-full ${dotColor} absolute bottom-2`}></span>
+                    <span className={`w-1 sm:w-1.5 h-1 sm:h-1.5 rounded-full ${dotColor} absolute bottom-1 sm:bottom-2`}></span>
                   )}
                 </button>
               )

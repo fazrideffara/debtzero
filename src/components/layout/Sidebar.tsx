@@ -54,7 +54,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
           fixed top-0 bottom-0 left-0 z-50 glass-panel p-4
           flex flex-col gap-6 transition-all duration-300 md:static md:z-0
           ${isOpen ? 'translate-x-0' : '-translate-x-full md:translate-x-0'}
-          ${isCollapsed ? 'w-20 items-center' : 'w-64'}
+          ${isCollapsed ? 'md:w-20 md:items-center w-64' : 'md:w-64 w-64'}
           md:m-4 md:rounded-3xl shadow-[0_10px_30px_rgba(0,0,0,0.03)] border-none
         `}
       >
