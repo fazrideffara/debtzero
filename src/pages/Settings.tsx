@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react'
-import { Settings, Save, AlertCircle, CheckCircle2 } from 'lucide-react'
+import { Settings, Save, AlertCircle, CheckCircle2, Trash2, Loader2 } from 'lucide-react'
 import { supabase } from '../lib/supabase'
 
 export const SettingsPage: React.FC = () => {
@@ -10,6 +10,7 @@ export const SettingsPage: React.FC = () => {
   const [apiKey, setApiKey] = useState('')
   const [notifEnabled, setNotifEnabled] = useState(false)
   const [loading, setLoading] = useState(false)
+  const [resetLoading, setResetLoading] = useState(false)
   const [message, setMessage] = useState<{ type: 'success' | 'error'; text: string } | null>(null)
 
   useEffect(() => {
@@ -35,7 +36,7 @@ export const SettingsPage: React.FC = () => {
           setNotifEnabled(data.notif_enabled)
         }
       } catch (err: any) {
-        console.error('Error loading settings:', err.message)
+        console.error('Gagal memuat pengaturan:', err.message)
       }
     }
     loadSettings()
@@ -48,7 +49,7 @@ export const SettingsPage: React.FC = () => {
 
     try {
       const { data: { user } } = await supabase.auth.getUser()
-      if (!user) throw new Error('No active session found')
+      if (!user) throw new Error('Sesi login tidak ditemukan.')
 
       const { error } = await supabase
         .from('user_settings')
@@ -64,21 +65,67 @@ export const SettingsPage: React.FC = () => {
 
       if (error) throw error
 
-      setMessage({ type: 'success', text: 'Settings updated successfully!' })
+      setMessage({ type: 'success', text: 'Pengaturan kamu berhasil disimpan, Bos!' })
     } catch (err: any) {
-      setMessage({ type: 'error', text: err.message || 'Failed to update settings.' })
+      setMessage({ type: 'error', text: err.message || 'Gagal menyimpan pengaturan.' })
     } finally {
       setLoading(false)
     }
   }
 
+  const handleResetData = async () => {
+    if (!confirm('Apakah kamu beneran yakin mau menghapus semua data hutang, pembayaran, dan log reminder secara permanen? Aksi ini TIDAK BISA dibatalkan!')) {
+      return
+    }
+
+    setResetLoading(true)
+    setMessage(null)
+
+    try {
+      const { data: { user } } = await supabase.auth.getUser()
+      if (!user) throw new Error('Sesi login tidak ditemukan.')
+
+      // 1. Delete payments
+      const { error: pError } = await supabase
+        .from('payments')
+        .delete()
+        .eq('user_id', user.id)
+      if (pError) throw pError
+
+      // 2. Delete debts
+      const { error: dError } = await supabase
+        .from('debts')
+        .delete()
+        .eq('user_id', user.id)
+      if (dError) throw dError
+
+      // 3. Delete notifications log
+      const { error: nError } = await supabase
+        .from('notifications_log')
+        .delete()
+        .eq('user_id', user.id)
+      if (nError) throw nError
+
+      setMessage({ type: 'success', text: 'Sukses bersihkan database! Semua data hutang & riwayat pembayaran kamu berhasil dihapus total.' })
+    } catch (err: any) {
+      setMessage({ type: 'error', text: err.message || 'Gagal membersihkan data.' })
+    } finally {
+      setResetLoading(false)
+    }
+  }
+
   return (
     <div className="space-y-6">
-      <h1 className="text-3xl font-extrabold text-slate-100 tracking-tight flex items-center gap-2">
-        <Settings className="text-purple-500" />
-        Settings
-      </h1>
-      <p className="text-slate-400 text-sm">Sesuaikan data keuangan bulanan dan kunci API pihak ketiga Anda.</p>
+      {/* Header */}
+      <div>
+        <h1 className="text-3xl font-extrabold text-slate-100 tracking-tight flex items-center gap-2">
+          <Settings className="text-purple-500" />
+          Pengaturan
+        </h1>
+        <p className="text-slate-400 text-sm">
+          Atur gaji bulanan, pengeluaran, bot Telegram, dan kunci API Gemini kamu di sini.
+        </p>
+      </div>
 
       {message && (
         <div className={`p-4 rounded-xl flex items-start gap-3 border ${
@@ -92,18 +139,18 @@ export const SettingsPage: React.FC = () => {
       )}
 
       <form onSubmit={handleSave} className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        {/* Financial Info */}
+        {/* Financial Baseline */}
         <div className="glass-card p-6 rounded-2xl border border-slate-800/80 space-y-4">
-          <h2 className="text-lg font-bold text-slate-200">Financial Baseline</h2>
+          <h2 className="text-lg font-bold text-slate-200">Kebutuhan Finansial</h2>
           <hr className="border-slate-800" />
           
           <div className="space-y-2">
-            <label className="text-xs font-semibold text-slate-400 uppercase tracking-wider">Pendapatan Bulanan (Rp)</label>
+            <label className="text-xs font-semibold text-slate-400 uppercase tracking-wider">Gaji / Pendapatan Bulanan (Rp)</label>
             <input
               type="number"
               value={income}
               onChange={(e) => setIncome(e.target.value)}
-              className="w-full bg-slate-900/60 border border-slate-800 rounded-xl px-4 py-3 text-slate-200 focus:outline-none focus:border-purple-500 transition-colors"
+              className="w-full bg-slate-900/60 border border-slate-800 rounded-xl px-4 py-3 text-slate-200 focus:outline-none focus:border-purple-500 transition-colors text-sm"
               placeholder="0"
             />
           </div>
@@ -114,7 +161,7 @@ export const SettingsPage: React.FC = () => {
               type="number"
               value={expense}
               onChange={(e) => setExpense(e.target.value)}
-              className="w-full bg-slate-900/60 border border-slate-800 rounded-xl px-4 py-3 text-slate-200 focus:outline-none focus:border-purple-500 transition-colors"
+              className="w-full bg-slate-900/60 border border-slate-800 rounded-xl px-4 py-3 text-slate-200 focus:outline-none focus:border-purple-500 transition-colors text-sm"
               placeholder="0"
             />
           </div>
@@ -122,16 +169,16 @@ export const SettingsPage: React.FC = () => {
 
         {/* Integration Credentials */}
         <div className="glass-card p-6 rounded-2xl border border-slate-800/80 space-y-4">
-          <h2 className="text-lg font-bold text-slate-200">API Credentials</h2>
+          <h2 className="text-lg font-bold text-slate-200">Integrasi API & Telegram Bot</h2>
           <hr className="border-slate-800" />
 
           <div className="space-y-2">
-            <label className="text-xs font-semibold text-slate-400 uppercase tracking-wider">Gemini API Key (OCR Image Scan)</label>
+            <label className="text-xs font-semibold text-slate-400 uppercase tracking-wider">Gemini API Key (Buat scan tagihan)</label>
             <input
               type="password"
               value={apiKey}
               onChange={(e) => setApiKey(e.target.value)}
-              className="w-full bg-slate-900/60 border border-slate-800 rounded-xl px-4 py-3 text-slate-200 focus:outline-none focus:border-purple-500 transition-colors"
+              className="w-full bg-slate-900/60 border border-slate-800 rounded-xl px-4 py-3 text-slate-200 focus:outline-none focus:border-purple-500 transition-colors text-sm"
               placeholder="••••••••••••••••"
             />
           </div>
@@ -142,7 +189,7 @@ export const SettingsPage: React.FC = () => {
               type="password"
               value={botToken}
               onChange={(e) => setBotToken(e.target.value)}
-              className="w-full bg-slate-900/60 border border-slate-800 rounded-xl px-4 py-3 text-slate-200 focus:outline-none focus:border-purple-500 transition-colors"
+              className="w-full bg-slate-900/60 border border-slate-800 rounded-xl px-4 py-3 text-slate-200 focus:outline-none focus:border-purple-500 transition-colors text-sm"
               placeholder="••••••••••••••••"
             />
           </div>
@@ -153,8 +200,8 @@ export const SettingsPage: React.FC = () => {
               type="text"
               value={chatId}
               onChange={(e) => setChatId(e.target.value)}
-              className="w-full bg-slate-900/60 border border-slate-800 rounded-xl px-4 py-3 text-slate-200 focus:outline-none focus:border-purple-500 transition-colors"
-              placeholder="your_telegram_chat_id"
+              className="w-full bg-slate-900/60 border border-slate-800 rounded-xl px-4 py-3 text-slate-200 focus:outline-none focus:border-purple-500 transition-colors text-sm"
+              placeholder="Contoh: 123456789"
             />
           </div>
 
@@ -166,23 +213,54 @@ export const SettingsPage: React.FC = () => {
               onChange={(e) => setNotifEnabled(e.target.checked)}
               className="w-4 h-4 rounded text-purple-600 focus:ring-purple-500 border-slate-800 bg-slate-900"
             />
-            <label htmlFor="notifToggle" className="text-sm font-medium text-slate-300 select-none cursor-pointer">
-              Enable Telegram reminders & notifications
+            <label htmlFor="notifToggle" className="text-xs font-semibold text-slate-300 select-none cursor-pointer">
+              Aktifkan reminder & notifikasi jatuh tempo via Telegram
             </label>
           </div>
         </div>
 
-        <div className="lg:col-span-2 flex justify-end">
+        {/* Action Button */}
+        <div className="lg:col-span-2 flex justify-end pt-2">
           <button
             type="submit"
             disabled={loading}
-            className="flex items-center gap-2 px-6 py-3 rounded-xl bg-purple-600 hover:bg-purple-700 disabled:opacity-50 text-white font-medium shadow-md transition-colors"
+            className="flex items-center gap-2 px-6 py-3 rounded-xl bg-purple-600 hover:bg-purple-700 disabled:opacity-50 text-white font-bold shadow-md transition-colors text-xs cursor-pointer"
           >
-            <Save size={16} />
-            <span>{loading ? 'Saving...' : 'Save Settings'}</span>
+            {loading ? <Loader2 size={16} className="animate-spin" /> : <Save size={16} />}
+            <span>{loading ? 'Menyimpan...' : 'Simpan Pengaturan'}</span>
           </button>
         </div>
       </form>
+
+      {/* DANGER ZONE: DATA CLEANUP & RESET */}
+      <div className="glass-card p-6 md:p-8 rounded-3xl border border-red-950/40 space-y-4 bg-red-950/5 relative overflow-hidden">
+        <div className="absolute top-0 right-0 w-32 h-32 bg-red-500/5 rounded-full blur-3xl"></div>
+        
+        <h2 className="text-lg font-bold text-red-400 flex items-center gap-2">
+          <AlertCircle size={20} />
+          Zona Bahaya ⚠️
+        </h2>
+        <hr className="border-red-950/20" />
+        
+        <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+          <div className="space-y-1">
+            <p className="text-sm font-bold text-slate-200">Hapus Seluruh Data Hutang</p>
+            <p className="text-slate-400 text-xs leading-relaxed max-w-xl">
+              Tombol di bawah ini bakal ngehapus semua data hutang, pembayaran, dan log notifikasi kamu secara permanen dari server database Supabase. Aksi ini gak bisa dibatalin ya, Bos!
+            </p>
+          </div>
+          
+          <button
+            type="button"
+            disabled={resetLoading}
+            onClick={handleResetData}
+            className="flex items-center justify-center gap-2 px-5 py-3 rounded-xl border border-red-500/30 bg-red-950/10 hover:bg-red-500/20 text-red-400 hover:text-white font-bold transition-all text-xs cursor-pointer shrink-0 shadow-md"
+          >
+            {resetLoading ? <Loader2 size={14} className="animate-spin" /> : <Trash2 size={14} />}
+            <span>{resetLoading ? 'Sedang Menghapus...' : 'Bersihkan Semua Data'}</span>
+          </button>
+        </div>
+      </div>
     </div>
   )
 }
