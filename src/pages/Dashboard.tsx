@@ -462,7 +462,11 @@ export const Dashboard: React.FC = () => {
               const dateStr = `${yyyy}-${mm}-${dd}`
               
               const isSelected = selectedCalendarDate === dateStr
-              
+              const isToday = 
+                day.getDate() === new Date().getDate() &&
+                day.getMonth() === new Date().getMonth() &&
+                day.getFullYear() === new Date().getFullYear()
+
               // Find most urgent debt color on this day
               let dotColor = 'bg-emerald-500'
               if (dayDebts.some(d => {
@@ -485,9 +489,10 @@ export const Dashboard: React.FC = () => {
                     isSelected ? 'border-emerald-500 bg-emerald-50 text-emerald-800 font-extrabold ring-2 ring-emerald-500/20' :
                     hasDebts ? 'border-slate-200 hover:border-emerald-500 hover:bg-emerald-50/20 text-slate-800 font-bold cursor-pointer shadow-sm' :
                     'border-transparent text-slate-400 hover:bg-slate-100/50'
-                  }`}
+                  } ${isToday ? 'ring-2 ring-emerald-500 ring-offset-1 bg-emerald-50/30 shadow-[0_0_10px_rgba(16,185,129,0.2)]' : ''}`}
+                  title={isToday ? 'Hari Ini' : undefined}
                 >
-                  <span className="text-[9px] sm:text-[11px]">{day.getDate()}</span>
+                  <span className={`text-[9px] sm:text-[11px] ${isToday ? 'text-emerald-700 font-extrabold' : ''}`}>{day.getDate()}</span>
                   {hasDebts && (
                     <span className={`w-1 sm:w-1.5 h-1 sm:h-1.5 rounded-full ${dotColor} absolute bottom-1 sm:bottom-2`}></span>
                   )}
