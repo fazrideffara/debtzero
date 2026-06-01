@@ -3,6 +3,7 @@ import { useDebts } from '../hooks/useDebts'
 import { supabase } from '../lib/supabase'
 import { formatRupiah } from '../utils/formatter'
 import { calculateDSR, determineRiskColor } from '../utils/calculator'
+import { checkAndTriggerReminders } from '../lib/telegram'
 import { 
   ResponsiveContainer, 
   LineChart, 
@@ -71,6 +72,24 @@ export const Dashboard: React.FC = () => {
       active = false
     }
   }, [])
+
+  // Trigger Telegram reminders once debts are loaded
+  useEffect(() => {
+    if (loadingDebts || debts.length === 0) return
+
+    async function triggerReminders() {
+      try {
+        const { data: { user } } = await supabase.auth.getUser()
+        if (user) {
+          await checkAndTriggerReminders(debts, user.id)
+        }
+      } catch (err) {
+        console.error('Gagal menjalankan trigger Telegram:', err)
+      }
+    }
+
+    triggerReminders()
+  }, [debts, loadingDebts])
 
   // 2. Memoized Financial Calculations (ZARA: Query efficiency and memoization to prevent re-renders)
   const calculations = useMemo(() => {
