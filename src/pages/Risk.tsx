@@ -218,10 +218,10 @@ export const Risk: React.FC = () => {
       <div>
         <h1 className="text-3xl font-extrabold text-slate-100 tracking-tight flex items-center gap-2">
           <ShieldAlert className="text-purple-500" />
-          Manajemen Risiko & Strategi
+          Rasio Cicilan & Strategi Bebas Hutang
         </h1>
         <p className="text-slate-400 text-sm">
-          Analisis rasio cicilan bulanan Anda dan simulasikan strategi pelunasan terbaik.
+          Pantau kesehatan keuangan kamu dan simulasikan cara pelunasan yang paling tepat.
         </p>
       </div>
 
@@ -231,11 +231,11 @@ export const Risk: React.FC = () => {
         {/* DSR SVG CIRCULAR GAUGE WITH INTERACTIVE ADJUSTMENTS */}
         <div className="glass-card p-6 rounded-3xl border border-slate-800/80 flex flex-col items-center justify-between text-center relative overflow-hidden">
           <div className="w-full">
-            <h2 className="text-sm font-bold text-slate-400 uppercase tracking-widest mb-4">Debt Service Ratio (DSR)</h2>
+            <h2 className="text-sm font-bold text-slate-400 uppercase tracking-widest mb-4">Rasio Cicilan (DSR)</h2>
             
             <div className="relative w-40 h-40 mx-auto flex items-center justify-center">
               {/* SVG Circular Ring */}
-              <svg className="w-full h-full transform -rotate-90">
+              <svg viewBox="0 0 160 160" className="w-full h-full transform -rotate-90">
                 <circle
                   cx="80"
                   cy="80"
@@ -263,29 +263,29 @@ export const Risk: React.FC = () => {
                 <span className={`text-[9px] font-extrabold uppercase px-1.5 py-0.5 rounded-full mt-1 ${
                   totals.dsr > 35 ? 'bg-red-500/10 text-red-400' : 'bg-emerald-500/10 text-emerald-400'
                 }`}>
-                  {totals.dsr > 35 ? 'Bahaya (>35%)' : 'Aman (≤35%)'}
+                  {totals.dsr > 35 ? '🔴 Bahaya (>35%)' : '🟢 Aman (≤35%)'}
                 </span>
               </div>
             </div>
 
             <div className="mt-5 space-y-1">
               <p className="text-xs text-slate-300 font-medium">
-                Cicilan Bulanan: <strong className="text-white">{formatRupiah(totals.totalMonthlyCommitment)}</strong>
+                Total Cicilan Bulanan: <strong className="text-white">{formatRupiah(totals.totalMonthlyCommitment)}</strong>
               </p>
               <p className="text-[10px] text-slate-500 font-bold uppercase">
-                Pendapatan Bulanan: {formatRupiah(totals.income)}
+                Gaji Bulanan Kamu: {formatRupiah(totals.income)}
               </p>
             </div>
           </div>
 
           {/* Interactive controls */}
           <div className="w-full mt-6 pt-4 border-t border-slate-800/80 space-y-4 text-left">
-            <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">Simulasikan Perubahan Keuangan</span>
+            <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">Coba Simulasikan Keuanganmu</span>
             
-            {/* Income Slider */}
+             {/* Income Slider */}
             <div className="space-y-1">
               <div className="flex justify-between text-[10px]">
-                <span className="text-slate-400">Simulasi Pendapatan</span>
+                <span className="text-slate-400">Simulasi Gaji Bulanan</span>
                 <span className="font-semibold text-slate-200">
                   {simulatedIncomeOffset >= 0 ? '+' : ''}{formatRupiah(simulatedIncomeOffset)}
                 </span>
@@ -304,7 +304,7 @@ export const Risk: React.FC = () => {
             {/* Installment Slider */}
             <div className="space-y-1">
               <div className="flex justify-between text-[10px]">
-                <span className="text-slate-400">Simulasi Tambah Cicilan</span>
+                <span className="text-slate-400">Simulasi Nambah Cicilan Baru</span>
                 <span className="font-semibold text-slate-200">+{formatRupiah(simulatedCommitmentOffset)}</span>
               </div>
               <input
@@ -327,7 +327,7 @@ export const Risk: React.FC = () => {
                 className="w-full py-1.5 bg-slate-900 border border-slate-800 hover:border-slate-700 text-[10px] text-slate-300 rounded-lg flex items-center justify-center gap-1.5 cursor-pointer transition-colors"
               >
                 <RefreshCw size={10} />
-                Reset Simulasi
+                Kembalikan ke Awal (Reset)
               </button>
             )}
           </div>
@@ -339,7 +339,7 @@ export const Risk: React.FC = () => {
             <div className="flex items-center justify-between">
               <h2 className="text-sm font-bold text-slate-400 uppercase tracking-widest">Rekomendasi Metode Pelunasan</h2>
               <div className="flex items-center gap-2">
-                <span className="text-[10px] font-bold uppercase tracking-wider text-slate-500">Pilih Tampilan:</span>
+                <span className="text-[10px] font-bold uppercase tracking-wider text-slate-500">Metode Terpilih:</span>
                 <div className="flex bg-slate-900 border border-slate-800 p-0.5 rounded-lg">
                   <button
                     onClick={() => setSelectedStrategy('snowball')}
@@ -370,10 +370,10 @@ export const Risk: React.FC = () => {
               }`}>
                 <div className="flex items-center gap-2 mb-2">
                   <TrendingDown className="text-purple-400" size={16} />
-                  <span className="text-xs font-bold text-slate-200">Snowball (Urus Nominal Kecil)</span>
+                  <span className="text-xs font-bold text-slate-200">Snowball ❄️ (Fokus Nominal Kecil)</span>
                 </div>
                 <p className="text-[11px] text-slate-400 leading-relaxed mb-3">
-                  Urutkan tagihan dari sisa saldo terkecil ke terbesar. Sangat disarankan untuk mendapatkan kemenangan mental secara cepat!
+                  Urutin tagihan kamu dari sisa nominal terkecil ke terbesar. Sangat direkomendasikan biar dapet rasa puas/lega duluan pas ada hutang yang beres!
                 </p>
                 <div className="space-y-1.5 max-h-[140px] overflow-y-auto pr-1">
                   {snowballList.map((item, idx) => (
@@ -392,10 +392,10 @@ export const Risk: React.FC = () => {
               }`}>
                 <div className="flex items-center gap-2 mb-2">
                   <Percent className="text-purple-400" size={16} />
-                  <span className="text-xs font-bold text-slate-200">Avalanche (Bunga Terbanyak)</span>
+                  <span className="text-xs font-bold text-slate-200">Avalanche ⚡ (Hajar Bunga Terbesar)</span>
                 </div>
                 <p className="text-[11px] text-slate-400 leading-relaxed mb-3">
-                  Urutkan tagihan berdasarkan tingkat suku bunga tertinggi ke terendah. Efektif menghemat biaya total bunga berjalan!
+                  Urutin tagihan kamu berdasarkan bunga tertinggi ke terendah. Paling hemat karena langsung nekan akumulasi biaya bunga berjalan!
                 </p>
                 <div className="space-y-1.5 max-h-[140px] overflow-y-auto pr-1">
                   {avalancheList.map((item, idx) => (
@@ -412,7 +412,7 @@ export const Risk: React.FC = () => {
             <div className="p-3 bg-purple-500/10 border border-purple-500/20 rounded-xl flex gap-2">
               <Sparkles className="text-purple-400 shrink-0 mt-0.5" size={14} />
               <p className="text-[11px] text-slate-300 leading-relaxed">
-                <strong>Rekomendasi Zeth Finance:</strong> Gunakan metode <strong className="text-white">Avalanche</strong> jika Anda ingin menghemat akumulasi bunga, atau pilih metode <strong className="text-white">Snowball</strong> jika Anda memiliki banyak tagihan kecil dan membutuhkan motivasi psikologis dengan melunasinya satu demi satu secara cepat.
+                <strong>Saran Zeth Finance:</strong> Pilih metode <strong className="text-white">Avalanche</strong> kalau kamu mau hemat total pembayaran bunga, atau pilih metode <strong className="text-white">Snowball</strong> kalau kamu butuh dorongan mental dengan melunasi tagihan-tagihan kecil satu per satu secara cepat.
               </p>
             </div>
           </div>
@@ -424,10 +424,10 @@ export const Risk: React.FC = () => {
         <div>
           <h2 className="text-xl font-bold text-slate-100 flex items-center gap-2">
             <Layers className="text-purple-500" />
-            Simulator Gali Lubang Tutup Lubang
+            Simulator Gali Lubang Tutup Lubang 🕳️
           </h2>
           <p className="text-slate-400 text-xs mt-1">
-            Simulasikan dampak nyata jika Anda membayar satu tagihan menggunakan dana pinjaman baru dari tempat lain.
+            Simulasiin efeknya kalau kamu nekat ngambil pinjaman baru cuma buat nutupin tagihan lama.
           </p>
         </div>
 
@@ -444,13 +444,13 @@ export const Risk: React.FC = () => {
 
             {/* Selection Debt A */}
             <div className="space-y-1.5">
-              <label className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Pilih Hutang Yang Akan Dibayar (Hutang A)</label>
+              <label className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Pilih Hutang Lama yang Mau Dilunasi (Hutang A)</label>
               <select
                 value={selectedDebtAId}
                 onChange={(e) => setSelectedDebtAId(e.target.value)}
                 className="w-full bg-slate-900 border border-slate-800 rounded-xl px-4 py-3 text-slate-200 text-sm focus:outline-none focus:border-purple-500"
               >
-                <option value="">-- Pilih Hutang Aktif --</option>
+                <option value="">-- Pilih Hutang Kamu Saat Ini --</option>
                 {activeDebts.map(d => (
                   <option key={d.id} value={d.id}>
                     {d.creditor_name} - Sisa: {formatRupiah(d.remaining_amount)} (Bunga: {d.type === 'personal' ? '0' : d.interest_rate}%)
@@ -461,11 +461,11 @@ export const Risk: React.FC = () => {
 
             {debtA && (
               <div className="bg-slate-950 p-4 rounded-xl border border-slate-850 space-y-4">
-                <p className="text-xs text-slate-400 font-semibold uppercase tracking-wider">Parameter Pinjaman Baru (Hutang B)</p>
+                <p className="text-xs text-slate-400 font-semibold uppercase tracking-wider">Detail Pinjaman Baru (Hutang B)</p>
                 
                 {/* Source Loan Name */}
                 <div className="space-y-1">
-                  <label className="text-[9px] font-bold text-slate-500 uppercase">Nama Kreditur Baru</label>
+                  <label className="text-[9px] font-bold text-slate-500 uppercase">Nama Pinjaman / Kreditur Baru</label>
                   <input
                     type="text"
                     value={sourceLoanName}
@@ -478,7 +478,7 @@ export const Risk: React.FC = () => {
                 <div className="grid grid-cols-2 gap-4">
                   {/* Source Loan Interest */}
                   <div className="space-y-1">
-                    <label className="text-[9px] font-bold text-slate-500 uppercase">Bunga Pinjaman Baru (% / Bulan)</label>
+                    <label className="text-[9px] font-bold text-slate-500 uppercase">Bunga Pinjaman Baru (% per Bulan)</label>
                     <input
                       type="number"
                       step="0.01"
@@ -521,27 +521,27 @@ export const Risk: React.FC = () => {
                   <div className="p-4 bg-red-500/10 border border-red-500/30 text-red-500 rounded-2xl space-y-1.5 shadow-[0_0_15px_rgba(239,68,68,0.15)]">
                     <div className="flex items-center gap-2 text-sm font-extrabold text-red-500">
                       <AlertTriangle size={18} className="animate-pulse" />
-                      <span>SANGAT TIDAK DIREKOMENDASIKAN (GALI LUBANG TUTUP LUBANG)!</span>
+                      <span>🚨 BAHAYA BANGET! (Gali Lubang Tutup Lubang)</span>
                     </div>
                     <p className="text-xs text-slate-300 font-normal leading-relaxed">
-                      Anda mencoba membayar hutang dengan bunga berjalan (<span className="text-white font-bold">{simulationData.rateA}% / bulan</span>) menggunakan pinjaman baru dengan bunga lebih tinggi (<span className="text-red-500 font-bold">{simulationData.rateB}% / bulan</span>). Ini akan menjerumuskan Anda ke dalam akumulasi bunga berjalan yang berlipat ganda!
+                      Kamu mencoba bayar hutang lama bermotif bunga (<span className="text-white font-bold">{simulationData.rateA}%</span>) pakai pinjaman baru yang bunganya malah lebih gede (<span className="text-red-500 font-bold">{simulationData.rateB}%</span>). Ini bakal bikin kamu makin tenggelam dalam jebakan bunga!
                     </p>
                   </div>
                 ) : (
                   <div className="p-4 bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 rounded-2xl space-y-1.5">
                     <div className="flex items-center gap-2 text-sm font-bold">
                       <Sparkles size={18} />
-                      <span>Pelunasan Konsolidasi Alternatif</span>
+                      <span>✅ Boleh Dicoba (Konsolidasi Bunga)</span>
                     </div>
                     <p className="text-xs text-slate-300 font-normal leading-relaxed">
-                      Pinjaman baru memiliki suku bunga lebih rendah (<span className="text-emerald-400 font-bold">{simulationData.rateB}%</span>) dibanding hutang asal (<span className="text-white font-bold">{simulationData.rateA}%</span>). Skema restrukturisasi/take-over ini secara teoritis menguntungkan untuk meminimalisasi bunga berjalan.
+                      Pinjaman baru punya bunga (<span className="text-emerald-400 font-bold">{simulationData.rateB}%</span>) yang lebih rendah daripada hutang lama (<span className="text-white font-bold">{simulationData.rateA}%</span>). Cara ini secara hitungan aman buat memangkas total beban bunga kamu.
                     </p>
                   </div>
                 )}
 
                 {/* Recharts chart showing cumulative interest projections */}
                 <div className="bg-slate-950 p-4 rounded-2xl border border-slate-900">
-                  <span className="text-[10px] font-bold text-slate-500 uppercase tracking-wider block mb-3">Grafik Proyeksi Akumulasi Bunga</span>
+                  <span className="text-[10px] font-bold text-slate-500 uppercase tracking-wider block mb-3">Grafik Akumulasi Beban Bunga</span>
                   <div className="w-full h-48">
                     <ResponsiveContainer width="100%" height="100%">
                       <AreaChart
