@@ -11,6 +11,7 @@ export const SettingsPage: React.FC = () => {
   const [notifEnabled, setNotifEnabled] = useState(false)
   const [loading, setLoading] = useState(false)
   const [resetLoading, setResetLoading] = useState(false)
+  const [showConfirmModal, setShowConfirmModal] = useState(false)
   const [message, setMessage] = useState<{ type: 'success' | 'error'; text: string } | null>(null)
 
   useEffect(() => {
@@ -47,6 +48,22 @@ export const SettingsPage: React.FC = () => {
     setLoading(true)
     setMessage(null)
 
+    const inc = parseFloat(income) || 0
+    const exp = parseFloat(expense) || 0
+
+    // Extreme validation checks to prevent crash / overflow
+    if (inc < 0 || exp < 0) {
+      setMessage({ type: 'error', text: 'Pemasukan atau pengeluaran gak boleh negatif ya, Bos!' })
+      setLoading(false)
+      return
+    }
+
+    if (inc > 1000000000000 || exp > 1000000000000) {
+      setMessage({ type: 'error', text: 'Wah, nominalnya kegedean tuh. Maksimal Rp1 Triliun ya!' })
+      setLoading(false)
+      return
+    }
+
     try {
       const { data: { user } } = await supabase.auth.getUser()
       if (!user) throw new Error('Sesi login tidak ditemukan.')
@@ -55,8 +72,8 @@ export const SettingsPage: React.FC = () => {
         .from('user_settings')
         .upsert({
           user_id: user.id,
-          monthly_income: parseFloat(income) || 0,
-          monthly_expense: parseFloat(expense) || 0,
+          monthly_income: inc,
+          monthly_expense: exp,
           telegram_bot_token: botToken || null,
           telegram_chat_id: chatId || null,
           gemini_api_key: apiKey || null,
@@ -73,11 +90,8 @@ export const SettingsPage: React.FC = () => {
     }
   }
 
-  const handleResetData = async () => {
-    if (!confirm('Apakah kamu beneran yakin mau menghapus semua data hutang, pembayaran, dan log reminder secara permanen? Aksi ini TIDAK BISA dibatalkan!')) {
-      return
-    }
-
+  const handleResetConfirm = async () => {
+    setShowConfirmModal(false)
     setResetLoading(true)
     setMessage(null)
 
@@ -85,26 +99,29 @@ export const SettingsPage: React.FC = () => {
       const { data: { user } } = await supabase.auth.getUser()
       if (!user) throw new Error('Sesi login tidak ditemukan.')
 
-      // 1. Delete payments
+      // Delete notifications log
+      const { error: nError } = await supabase
+        .from('notifications_log')
+        .delete()
+        .eq('user_id', user.id)
+      if (nError) throw nError
+
+      // Delete payments
       const { error: pError } = await supabase
         .from('payments')
         .delete()
         .eq('user_id', user.id)
       if (pError) throw pError
 
-      // 2. Delete debts
+      // Delete debts
       const { error: dError } = await supabase
         .from('debts')
         .delete()
         .eq('user_id', user.id)
       if (dError) throw dError
 
-      // 3. Delete notifications log
-      const { error: nError } = await supabase
-        .from('notifications_log')
-        .delete()
-        .eq('user_id', user.id)
-      if (nError) throw nError
+      // Dispatch global reset event to clear/refetch states in active tabs instantly!
+      window.dispatchEvent(new Event('debt-data-reset'))
 
       setMessage({ type: 'success', text: 'Sukses bersihkan database! Semua data hutang & riwayat pembayaran kamu berhasil dihapus total.' })
     } catch (err: any) {
@@ -253,7 +270,7 @@ export const SettingsPage: React.FC = () => {
           <button
             type="button"
             disabled={resetLoading}
-            onClick={handleResetData}
+            onClick={() => setShowConfirmModal(true)}
             className="flex items-center justify-center gap-2 px-5 py-3 rounded-xl border border-red-500/30 bg-red-950/10 hover:bg-red-500/20 text-red-400 hover:text-white font-bold transition-all text-xs cursor-pointer shrink-0 shadow-md"
           >
             {resetLoading ? <Loader2 size={14} className="animate-spin" /> : <Trash2 size={14} />}
@@ -261,6 +278,38 @@ export const SettingsPage: React.FC = () => {
           </button>
         </div>
       </div>
+
+      {/* Custom Confirmation Modal Overlay (ZARA/NOVA requirements) */}
+      {showConfirmModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-sm">
+          <div className="w-full max-w-md glass-card p-6 md:p-8 rounded-3xl border border-red-500/30 space-y-6">
+            <div className="flex items-center gap-3 text-red-400">
+              <AlertCircle size={28} />
+              <h2 className="text-xl font-bold">Konfirmasi Hapus Data</h2>
+            </div>
+            <hr className="border-slate-800" />
+            <p className="text-slate-300 text-sm leading-relaxed">
+              Apakah kamu beneran yakin mau menghapus semua data hutang, pembayaran, dan log reminder secara permanen? Aksi ini <b>TIDAK BISA</b> dibatalkan!
+            </p>
+            <div className="flex items-center justify-end gap-3 pt-2">
+              <button
+                type="button"
+                onClick={() => setShowConfirmModal(false)}
+                className="px-4 py-2.5 rounded-xl border border-slate-800 text-slate-400 hover:text-white hover:bg-slate-900 transition-colors text-xs font-semibold cursor-pointer"
+              >
+                Batal
+              </button>
+              <button
+                type="button"
+                onClick={handleResetConfirm}
+                className="px-4 py-2.5 rounded-xl bg-red-600 hover:bg-red-700 text-white font-bold transition-colors text-xs cursor-pointer shadow-md"
+              >
+                Ya, Hapus Semua
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   )
 }

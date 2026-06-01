@@ -78,10 +78,18 @@ export const Debts: React.FC = () => {
       setValidationError('Nominal Pokok Hutang harus berupa angka positif lebih dari 0.')
       return
     }
+    if (principal > 1000000000000) {
+      setValidationError('Nominal pokok hutang terlalu besar. Maksimal Rp1 Triliun ya!')
+      return
+    }
 
     const rate = parseFloat(interestRate)
     if (type !== 'personal' && (isNaN(rate) || rate < 0)) {
       setValidationError('Persentase bunga tidak boleh negatif.')
+      return
+    }
+    if (type !== 'personal' && rate > 100) {
+      setValidationError('Persentase bunga tidak boleh melebihi 100% per periode.')
       return
     }
 
@@ -90,6 +98,10 @@ export const Debts: React.FC = () => {
       parsedTenor = parseInt(tenor)
       if (isNaN(parsedTenor) || parsedTenor <= 0) {
         setValidationError('Tenor harus berupa angka bulat positif.')
+        return
+      }
+      if (parsedTenor > 1200) {
+        setValidationError('Tenor tidak boleh melebihi 1200 periode.')
         return
       }
     }

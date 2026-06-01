@@ -6,6 +6,7 @@ import {
   User, 
   ShieldCheck, 
   AlertCircle, 
+  CheckCircle2,
   ArrowRight, 
   ArrowLeft, 
   Calculator, 
@@ -23,6 +24,7 @@ export const Login: React.FC = () => {
   const [fullName, setFullName] = useState('')
   const [loading, setLoading] = useState(false)
   const [errorMessage, setErrorMessage] = useState('')
+  const [successMessage, setSuccessMessage] = useState('')
   const navigate = useNavigate()
 
   // Quiz States
@@ -101,7 +103,7 @@ export const Login: React.FC = () => {
         })
         if (error) throw error
         
-        alert('Registrasi berhasil! Silakan periksa kotak masuk email Anda untuk verifikasi link.')
+        setSuccessMessage('Registrasi berhasil! Silakan periksa kotak masuk email Anda untuk verifikasi link.')
         setIsRegister(false)
       } else {
         // Login flow
@@ -335,6 +337,14 @@ export const Login: React.FC = () => {
               <div className="p-4 rounded-xl bg-rose-500/10 border border-rose-500/25 text-rose-400 text-xs flex items-start gap-2.5">
                 <AlertCircle size={18} className="shrink-0 mt-0.5" />
                 <span>{errorMessage}</span>
+              </div>
+            )}
+
+            {/* Success Notification */}
+            {successMessage && (
+              <div className="p-4 rounded-xl bg-emerald-500/10 border border-emerald-500/25 text-emerald-400 text-xs flex items-start gap-2.5">
+                <CheckCircle2 size={18} className="shrink-0 mt-0.5" />
+                <span>{successMessage}</span>
               </div>
             )}
 

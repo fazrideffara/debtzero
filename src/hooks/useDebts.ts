@@ -46,6 +46,14 @@ export const useDebts = () => {
     fetchDebts()
   }, [fetchDebts])
 
+  useEffect(() => {
+    const handleReset = () => {
+      setDebts([])
+    }
+    window.addEventListener('debt-data-reset', handleReset)
+    return () => window.removeEventListener('debt-data-reset', handleReset)
+  }, [])
+
   const addDebt = async (debtData: Omit<Debt, 'id' | 'user_id' | 'created_at' | 'status'>) => {
     setError(null)
     try {
