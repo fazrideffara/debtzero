@@ -4,7 +4,6 @@ import {
   Lock, 
   Mail, 
   User, 
-  ShieldCheck, 
   AlertCircle, 
   CheckCircle2,
   ArrowRight, 
@@ -14,6 +13,7 @@ import {
 } from 'lucide-react'
 import { supabase } from '../lib/supabase'
 import { formatRupiah } from '../utils/formatter'
+import { ShieldLogo } from '../components/layout/ShieldLogo'
 
 export const Login: React.FC = () => {
   // Navigation & Auth Form States
@@ -128,30 +128,32 @@ export const Login: React.FC = () => {
 
   return (
     <div className="min-h-screen bg-slate-50 flex items-center justify-center p-4 relative overflow-hidden font-sans">
-      {/* Visual background decorations */}
-      <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-emerald-500/10 rounded-full blur-3xl"></div>
-      <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-teal-500/10 rounded-full blur-3xl"></div>
+      {/* Visual background decorations with premium dynamic wave gradients */}
+      <div className="absolute top-0 left-0 right-0 h-96 bg-gradient-to-b from-emerald-500/10 to-transparent pointer-events-none"></div>
+      <div className="absolute -top-40 -left-40 w-96 h-96 bg-emerald-400/20 rounded-full blur-3xl opacity-60"></div>
+      <div className="absolute -bottom-40 -right-40 w-96 h-96 bg-teal-400/20 rounded-full blur-3xl opacity-60"></div>
+      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[350px] bg-gradient-to-tr from-emerald-500/5 to-teal-500/5 rounded-full blur-3xl pointer-events-none"></div>
 
-      <div className="w-full max-w-lg glass-card p-6 md:p-8 rounded-3xl relative z-10 border border-slate-200 shadow-2xl transition-all duration-300">
+      <div className="w-full max-w-lg glass-card p-8 md:p-10 rounded-3xl relative z-10 border border-slate-200/90 shadow-2xl transition-all duration-300">
         
         {/* HERO STEP */}
         {step === 'hero' && (
           <div className="space-y-6 text-center py-4">
-            <div className="inline-flex p-3 rounded-2xl bg-emerald-500/10 border border-emerald-500/20 text-emerald-600 mb-2">
-              <ShieldCheck size={36} className="animate-pulse" />
+            <div className="inline-flex p-3.5 rounded-2xl bg-emerald-50 border border-emerald-200 text-emerald-600 mb-2 shadow-sm animate-pulse">
+              <ShieldLogo size={36} />
             </div>
             <h1 className="text-3xl md:text-4xl font-extrabold text-slate-900 tracking-tight leading-tight">
               Hadapi Kepala Dingin, <br />
               <span className="bg-gradient-to-r from-emerald-600 to-teal-500 bg-clip-text text-transparent">Beresin Bareng BebasHutang.</span>
             </h1>
-            <p className="text-slate-600 text-sm md:text-base leading-relaxed max-w-md mx-auto">
+            <p className="text-slate-650 text-sm md:text-base leading-relaxed max-w-md mx-auto">
               Satu tempat privat untuk hitung, rapihin, dan lepas dari jeratan cicilan tanpa dihakimi. Mulai langkah pertamamu menuju masa depan yang lebih lega hari ini.
             </p>
             
-            <div className="pt-4">
+            <div className="pt-6">
               <button
                 onClick={() => setStep('quiz')}
-                className="w-full py-4 bg-emerald-600 hover:bg-emerald-700 text-white font-bold rounded-2xl transition-all duration-200 shadow-lg shadow-emerald-600/20 hover:shadow-emerald-600/40 flex items-center justify-center gap-2 text-sm cursor-pointer"
+                className="w-full py-4 bg-emerald-600 hover:bg-emerald-700 text-white font-bold rounded-2xl transition-all duration-200 shadow-lg shadow-emerald-600/20 hover:shadow-emerald-600/40 flex items-center justify-center gap-2 text-sm cursor-pointer hover:-translate-y-0.5 active:translate-y-0"
               >
                 <span>Mulai Hitung Solusinya (Gratis & Privat)</span>
                 <ArrowRight size={16} />
@@ -321,8 +323,8 @@ export const Login: React.FC = () => {
           <div className="space-y-6">
             {/* Header */}
             <div className="text-center">
-              <div className="inline-flex p-3 rounded-2xl bg-emerald-500/10 border border-emerald-500/20 text-emerald-600 mb-3">
-                <ShieldCheck size={28} />
+              <div className="inline-flex p-3 rounded-2xl bg-emerald-50 border border-emerald-200 text-emerald-600 mb-3">
+                <ShieldLogo size={28} />
               </div>
               <h1 className="text-2xl font-extrabold text-slate-800 tracking-tight">
                 {isRegister ? 'Buat Akun Baru' : 'Masuk ke BebasHutang'}

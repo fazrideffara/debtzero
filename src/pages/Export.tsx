@@ -136,7 +136,7 @@ export const Export: React.FC = () => {
       // Header branding
       doc.setFont('Helvetica', 'bold')
       doc.setFontSize(24)
-      doc.setTextColor(139, 92, 246) // Purple
+      doc.setTextColor(16, 185, 129) // Emerald Green
       doc.text('BebasHutang', 14, 20)
 
       doc.setFontSize(10)
@@ -228,18 +228,18 @@ export const Export: React.FC = () => {
     <div className="space-y-6">
       {/* Header */}
       <div>
-        <h1 className="text-3xl font-extrabold text-slate-100 tracking-tight flex items-center gap-2">
-          <Download className="text-purple-500" />
+        <h1 className="text-3xl font-extrabold text-slate-900 tracking-tight flex items-center gap-2">
+          <Download className="text-emerald-500" />
           Ekspor Data & Laporan
         </h1>
-        <p className="text-slate-400 text-sm">
+        <p className="text-slate-550 text-sm">
           Unduh rekapitulasi lengkap riwayat pembayaran dan status hutang kamu dalam format dokumen siap cetak.
         </p>
       </div>
 
       {isLoading ? (
         <div className="flex flex-col items-center justify-center py-24 gap-3">
-          <Loader2 className="w-8 h-8 text-purple-500 animate-spin" />
+          <Loader2 className="w-8 h-8 text-emerald-500 animate-spin" />
           <span className="text-slate-500 text-xs font-medium">Menghubungkan ke database...</span>
         </div>
       ) : (
@@ -249,8 +249,8 @@ export const Export: React.FC = () => {
           {feedbackMessage && (
             <div className={`p-4 rounded-2xl border flex items-center gap-3 text-xs font-semibold ${
               feedbackMessage.isError 
-                ? 'bg-rose-500/10 border-rose-500/20 text-rose-400' 
-                : 'bg-emerald-500/10 border-emerald-500/20 text-emerald-400'
+                ? 'bg-rose-50 border-rose-200 text-rose-700' 
+                : 'bg-emerald-50 border-emerald-200 text-emerald-700'
             }`}>
               {feedbackMessage.isError ? <AlertCircle size={16} /> : <ShieldCheck size={16} />}
               <p>{feedbackMessage.text}</p>
@@ -261,13 +261,13 @@ export const Export: React.FC = () => {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             
             {/* Card Option: PDF */}
-            <div className="glass-card p-6 md:p-8 rounded-3xl border border-slate-800/80 flex flex-col justify-between items-start space-y-6">
+            <div className="glass-card p-6 md:p-8 rounded-3xl border border-slate-200 flex flex-col justify-between items-start space-y-6">
               <div className="space-y-3">
-                <div className="inline-flex p-3 rounded-2xl bg-purple-500/10 border border-purple-500/20 text-purple-400">
+                <div className="inline-flex p-3 rounded-2xl bg-emerald-50 border border-emerald-200 text-emerald-600">
                   <FileText size={24} />
                 </div>
-                <h2 className="text-lg font-bold text-slate-100">Cetak Dokumen Laporan (PDF)</h2>
-                <p className="text-slate-400 text-xs leading-relaxed">
+                <h2 className="text-lg font-bold text-slate-800">Cetak Dokumen Laporan (PDF)</h2>
+                <p className="text-slate-500 text-xs leading-relaxed">
                   Unduh ringkasan data hutang aktif kamu dalam format dokumen resmi A4 yang rapi, bersih, dan siap untuk langsung dicetak.
                 </p>
               </div>
@@ -275,7 +275,7 @@ export const Export: React.FC = () => {
               <button
                 disabled={exportingType !== null || debts.length === 0}
                 onClick={handleExportPDF}
-                className="w-full py-3 bg-purple-600 hover:bg-purple-700 disabled:opacity-50 text-white font-bold rounded-xl text-xs transition-all flex items-center justify-center gap-2 cursor-pointer shadow-md shadow-purple-600/10"
+                className="w-full py-3 bg-emerald-600 hover:bg-emerald-700 disabled:opacity-50 text-white font-bold rounded-xl text-xs transition-all flex items-center justify-center gap-2 cursor-pointer shadow-md shadow-emerald-600/10"
               >
                 {exportingType === 'pdf' ? (
                   <>
@@ -292,13 +292,13 @@ export const Export: React.FC = () => {
             </div>
 
             {/* Card Option: Excel Spreadsheet */}
-            <div className="glass-card p-6 md:p-8 rounded-3xl border border-slate-800/80 flex flex-col justify-between items-start space-y-6">
+            <div className="glass-card p-6 md:p-8 rounded-3xl border border-slate-200 flex flex-col justify-between items-start space-y-6">
               <div className="space-y-3">
-                <div className="inline-flex p-3 rounded-2xl bg-purple-500/10 border border-purple-500/20 text-purple-400">
+                <div className="inline-flex p-3 rounded-2xl bg-emerald-50 border border-emerald-200 text-emerald-600">
                   <Table size={24} />
                 </div>
-                <h2 className="text-lg font-bold text-slate-100">Ekspor Data Tabular (Excel / XLSX)</h2>
-                <p className="text-slate-400 text-xs leading-relaxed">
+                <h2 className="text-lg font-bold text-slate-800">Ekspor Data Tabular (Excel / XLSX)</h2>
+                <p className="text-slate-550 text-xs leading-relaxed">
                   Unduh seluruh database riwayat transaksi pembayaran dan detail hutang kamu ke dalam file spreadsheet Excel dengan tab terpisah.
                 </p>
               </div>
@@ -306,7 +306,7 @@ export const Export: React.FC = () => {
               <button
                 disabled={exportingType !== null || debts.length === 0}
                 onClick={handleExportExcel}
-                className="w-full py-3 bg-purple-600 hover:bg-purple-700 disabled:opacity-50 text-white font-bold rounded-xl text-xs transition-all flex items-center justify-center gap-2 cursor-pointer shadow-md shadow-purple-600/10"
+                className="w-full py-3 bg-emerald-600 hover:bg-emerald-700 disabled:opacity-50 text-white font-bold rounded-xl text-xs transition-all flex items-center justify-center gap-2 cursor-pointer shadow-md shadow-emerald-600/10"
               >
                 {exportingType === 'excel' ? (
                   <>
@@ -325,10 +325,10 @@ export const Export: React.FC = () => {
           </div>
 
           {/* Quick Notice Info Box */}
-          <div className="p-4 bg-slate-900/40 border border-slate-850 rounded-2xl flex gap-3 items-start text-xs text-slate-400">
-            <Sparkles className="text-purple-400 shrink-0 mt-0.5" size={16} />
+          <div className="p-4 bg-slate-100 border border-slate-200 rounded-2xl flex gap-3 items-start text-xs text-slate-500">
+            <Sparkles className="text-emerald-650 shrink-0 mt-0.5" size={16} />
             <div className="space-y-1">
-              <p className="font-bold text-slate-300">Tips Laporan & Ekspor:</p>
+              <p className="font-bold text-slate-700">Tips Laporan & Ekspor:</p>
               <p className="leading-relaxed font-normal">
                 File Excel yang diekspor akan berisi 3 sheet terpisah untuk membantu kamu menyaring/menganalisis riwayat pelunasan secara manual menggunakan Microsoft Excel, Google Sheets, atau aplikasi sejenis.
               </p>

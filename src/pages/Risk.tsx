@@ -14,7 +14,6 @@ import {
   Legend
 } from 'recharts'
 import { 
-  ShieldAlert, 
   Sparkles, 
   AlertTriangle, 
   Layers,
@@ -23,6 +22,7 @@ import {
   RefreshCw,
   Percent
 } from 'lucide-react'
+import { ShieldLogo } from '../components/layout/ShieldLogo'
 
 export const Risk: React.FC = () => {
   const { debts, loading: loadingDebts } = useDebts()
@@ -217,10 +217,10 @@ export const Risk: React.FC = () => {
       {/* Header */}
       <div>
         <h1 className="text-3xl font-extrabold text-slate-900 tracking-tight flex items-center gap-2">
-          <ShieldAlert className="text-emerald-500" />
+          <ShieldLogo size={32} />
           Rasio Cicilan & Strategi Bebas Hutang
         </h1>
-        <p className="text-slate-500 text-sm">
+        <p className="text-slate-550 text-sm">
           Pantau kesehatan keuangan kamu dan simulasikan cara pelunasan yang paling tepat.
         </p>
       </div>

@@ -3,11 +3,11 @@ import { NavLink } from 'react-router-dom'
 import { 
   LayoutDashboard, 
   CreditCard, 
-  ShieldAlert, 
   Download, 
   Settings, 
   X 
 } from 'lucide-react'
+import { ShieldLogo } from './ShieldLogo'
 
 interface SidebarProps {
   isOpen: boolean
@@ -18,7 +18,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
   const menuItems = [
     { to: '/', label: 'Dashboard', icon: LayoutDashboard, id: 'sidebar-link-dashboard' },
     { to: '/debts', label: 'Hutang Saya', icon: CreditCard, id: 'sidebar-link-debts' },
-    { to: '/risk', label: 'Risiko & Strategi', icon: ShieldAlert, id: 'sidebar-link-risk' },
+    { to: '/risk', label: 'Risiko & Strategi', icon: ShieldLogo, id: 'sidebar-link-risk' },
     { to: '/export', label: 'Laporan & Ekspor', icon: Download, id: 'sidebar-link-export' },
     { to: '/settings', label: 'Pengaturan', icon: Settings, id: 'sidebar-link-settings' },
   ]
