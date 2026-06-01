@@ -4,9 +4,9 @@
   --font-sans: "Outfit", "Inter", system-ui, -apple-system, sans-serif;
   --font-heading: "Outfit", system-ui, -apple-system, sans-serif;
   
-  /* Modern premium color scheme presets */
-  --color-brand-primary: #aa3bff;
-  --color-brand-secondary: #c084fc;
+  /* Modern premium green financial color scheme presets */
+  --color-brand-primary: #10b981;
+  --color-brand-secondary: #34d399;
   --color-brand-dark: #0f172a;
 }
 
@@ -17,49 +17,49 @@
 }
 
 ::-webkit-scrollbar-track {
-  background: rgba(15, 23, 42, 0.6);
+  background: rgba(241, 245, 249, 0.6);
 }
 
 ::-webkit-scrollbar-thumb {
-  background: rgba(170, 59, 255, 0.3);
+  background: rgba(16, 185, 129, 0.3);
   border-radius: 4px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: rgba(170, 59, 255, 0.6);
+  background: rgba(16, 185, 129, 0.6);
 }
 
-/* Reusable premium micro-interactions and glassmorphism styling */
+/* Reusable premium micro-interactions and glassmorphism styling for Light Mode */
 @utility glass-panel {
-  background-color: rgba(15, 23, 42, 0.45);
+  background-color: rgba(255, 255, 255, 0.8);
   backdrop-filter: blur(12px);
-  border: 1px solid rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(226, 232, 240, 0.8);
 }
 
 @utility glass-card {
-  background-color: rgba(30, 41, 59, 0.45);
+  background-color: rgba(255, 255, 255, 0.85);
   backdrop-filter: blur(16px);
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+  border: 1px solid rgba(226, 232, 240, 0.8);
+  box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.08);
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 @utility glass-card-hover {
   &:hover {
     transform: translateY(-2px);
-    border-color: rgba(170, 59, 255, 0.3);
-    box-shadow: 0 12px 40px 0 rgba(170, 59, 255, 0.15);
+    border-color: rgba(16, 185, 129, 0.3);
+    box-shadow: 0 12px 40px 0 rgba(16, 185, 129, 0.1);
   }
 }
 
 @utility text-gradient-purple {
-  background: linear-gradient(135deg, #e9d5ff 0%, #c084fc 50%, #a855f7 100%);
+  background: linear-gradient(135deg, #065f46 0%, #10b981 50%, #34d399 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
 }
 
 @utility text-gradient-rose {
-  background: linear-gradient(135deg, #fecdd3 0%, #fda4af 50%, #f43f5e 100%);
+  background: linear-gradient(135deg, #991b1b 0%, #ef4444 50%, #f87171 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
 }

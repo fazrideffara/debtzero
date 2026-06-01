@@ -127,40 +127,40 @@ export const Login: React.FC = () => {
   const estMonths = monthlyPay > 0 ? Math.ceil(totalDebt / monthlyPay) : 0
 
   return (
-    <div className="min-h-screen bg-slate-950 flex items-center justify-center p-4 relative overflow-hidden font-sans">
+    <div className="min-h-screen bg-slate-50 flex items-center justify-center p-4 relative overflow-hidden font-sans">
       {/* Visual background decorations */}
-      <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-purple-600/10 rounded-full blur-3xl"></div>
-      <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-blue-600/10 rounded-full blur-3xl"></div>
+      <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-emerald-500/10 rounded-full blur-3xl"></div>
+      <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-teal-500/10 rounded-full blur-3xl"></div>
 
-      <div className="w-full max-w-lg glass-card p-6 md:p-8 rounded-3xl relative z-10 border border-slate-800/80 shadow-2xl transition-all duration-300">
+      <div className="w-full max-w-lg glass-card p-6 md:p-8 rounded-3xl relative z-10 border border-slate-200 shadow-2xl transition-all duration-300">
         
         {/* HERO STEP */}
         {step === 'hero' && (
           <div className="space-y-6 text-center py-4">
-            <div className="inline-flex p-3 rounded-2xl bg-purple-500/10 border border-purple-500/20 text-purple-400 mb-2">
+            <div className="inline-flex p-3 rounded-2xl bg-emerald-500/10 border border-emerald-500/20 text-emerald-600 mb-2">
               <ShieldCheck size={36} className="animate-pulse" />
             </div>
-            <h1 className="text-3xl md:text-4xl font-extrabold text-slate-100 tracking-tight leading-tight">
-              Mulai Langkah Pertama <br />
-              <span className="bg-gradient-to-r from-purple-400 to-pink-500 bg-clip-text text-transparent">Bebas Hutang</span>
+            <h1 className="text-3xl md:text-4xl font-extrabold text-slate-900 tracking-tight leading-tight">
+              Hadapi Kepala Dingin, <br />
+              <span className="bg-gradient-to-r from-emerald-600 to-teal-500 bg-clip-text text-transparent">Beresin Bareng BebasHutang.</span>
             </h1>
-            <p className="text-slate-300 text-sm md:text-base leading-relaxed max-w-md mx-auto">
-              Pusing dikejar pinjol? Kebanyakan cicilan paylater? Tenang, yuk beresin bareng <strong className="text-purple-400">BebasHutang</strong> secara privat, cerdas, dan terstruktur.
+            <p className="text-slate-600 text-sm md:text-base leading-relaxed max-w-md mx-auto">
+              Satu tempat privat untuk hitung, rapihin, dan lepas dari jeratan cicilan tanpa dihakimi. Mulai langkah pertamamu menuju masa depan yang lebih lega hari ini.
             </p>
             
             <div className="pt-4">
               <button
                 onClick={() => setStep('quiz')}
-                className="w-full py-4 bg-purple-600 hover:bg-purple-700 text-white font-bold rounded-2xl transition-all duration-200 shadow-lg shadow-purple-600/20 hover:shadow-purple-600/40 flex items-center justify-center gap-2 text-sm cursor-pointer"
+                className="w-full py-4 bg-emerald-600 hover:bg-emerald-700 text-white font-bold rounded-2xl transition-all duration-200 shadow-lg shadow-emerald-600/20 hover:shadow-emerald-600/40 flex items-center justify-center gap-2 text-sm cursor-pointer"
               >
-                <span>Mulai Cari Solusi</span>
+                <span>Mulai Hitung Solusinya (Gratis & Privat)</span>
                 <ArrowRight size={16} />
               </button>
             </div>
             <div className="text-center pt-2">
               <button
                 onClick={() => setStep('auth')}
-                className="text-slate-400 hover:text-white text-xs font-semibold underline underline-offset-4"
+                className="text-slate-500 hover:text-slate-800 text-xs font-semibold underline underline-offset-4"
               >
                 Langsung login jika sudah punya akun
               </button>
@@ -181,26 +181,26 @@ export const Login: React.FC = () => {
                     setStep('hero')
                   }
                 }}
-                className="p-2 rounded-lg hover:bg-slate-900 text-slate-400 hover:text-white transition-colors"
+                className="p-2 rounded-lg hover:bg-slate-100 text-slate-500 hover:text-slate-800 transition-colors"
               >
                 <ArrowLeft size={16} />
               </button>
-              <span className="text-xs font-bold text-purple-400 uppercase tracking-widest">
+              <span className="text-xs font-bold text-emerald-600 uppercase tracking-widest">
                 Pertanyaan {quizIndex + 1} dari {quizQuestions.length}
               </span>
             </div>
 
             <div className="space-y-2">
-              <div className="w-full bg-slate-900 h-1.5 rounded-full overflow-hidden">
+              <div className="w-full bg-slate-200 h-1.5 rounded-full overflow-hidden">
                 <div 
-                  className="bg-purple-500 h-full transition-all duration-300"
+                  className="bg-emerald-500 h-full transition-all duration-300"
                   style={{ width: `${((quizIndex + 1) / quizQuestions.length) * 100}%` }}
                 ></div>
               </div>
             </div>
 
             <div className="space-y-4">
-              <h2 className="text-lg font-bold text-slate-100 leading-snug">
+              <h2 className="text-lg font-bold text-slate-800 leading-snug">
                 {quizQuestions[quizIndex].question}
               </h2>
               <div className="space-y-3 pt-2">
@@ -208,7 +208,7 @@ export const Login: React.FC = () => {
                   <button
                     key={idx}
                     onClick={() => handleQuizAnswer(option)}
-                    className="w-full text-left p-4 bg-slate-900/60 hover:bg-purple-950/20 border border-slate-800 hover:border-purple-500/30 rounded-2xl text-slate-300 hover:text-white transition-all text-xs font-medium cursor-pointer"
+                    className="w-full text-left p-4 bg-white hover:bg-emerald-50/30 border border-slate-200 hover:border-emerald-500/30 rounded-2xl text-slate-700 hover:text-emerald-900 transition-all text-xs font-medium cursor-pointer"
                   >
                     {option}
                   </button>
@@ -229,11 +229,11 @@ export const Login: React.FC = () => {
                   setQuizAnswers(quizAnswers.slice(0, -1))
                   setShowResult(false)
                 }}
-                className="p-2 rounded-lg hover:bg-slate-900 text-slate-400 hover:text-white transition-colors"
+                className="p-2 rounded-lg hover:bg-slate-100 text-slate-500 hover:text-slate-800 transition-colors"
               >
                 <ArrowLeft size={16} />
               </button>
-              <h2 className="text-xs font-bold text-purple-400 uppercase tracking-widest flex items-center gap-1">
+              <h2 className="text-xs font-bold text-emerald-600 uppercase tracking-widest flex items-center gap-1">
                 <Calculator size={12} />
                 Kalkulator Bebas Hutang
               </h2>
@@ -242,29 +242,29 @@ export const Login: React.FC = () => {
             {!showResult ? (
               <div className="space-y-5">
                 <div className="space-y-1">
-                  <h3 className="text-base font-bold text-slate-100">Kira-kira berapa total hutang kamu saat ini?</h3>
-                  <p className="text-[11px] text-slate-400">Gabungkan semua cicilan, paylater, kartu kredit, atau hutang personal.</p>
+                  <h3 className="text-base font-bold text-slate-800">Kira-kira berapa total hutang kamu saat ini?</h3>
+                  <p className="text-[11px] text-slate-500">Gabungkan semua cicilan, paylater, kartu kredit, atau hutang personal.</p>
                 </div>
 
                 <div className="space-y-4">
                   <div className="space-y-1.5">
-                    <label className="text-xs font-semibold text-slate-400 uppercase tracking-wider">Total Hutang (Rp)</label>
+                    <label className="text-xs font-semibold text-slate-500 uppercase tracking-wider">Total Hutang (Rp)</label>
                     <input
                       type="number"
                       value={calcDebt}
                       onChange={(e) => setCalcDebt(e.target.value)}
-                      className="w-full bg-slate-900 border border-slate-800 rounded-xl px-4 py-3 text-slate-200 text-sm focus:outline-none focus:border-purple-500"
+                      className="w-full bg-white border border-slate-200 rounded-xl px-4 py-3 text-slate-800 text-sm focus:outline-none focus:border-emerald-500"
                       placeholder="Contoh: 15000000"
                     />
                   </div>
 
                   <div className="space-y-1.5">
-                    <label className="text-xs font-semibold text-slate-400 uppercase tracking-wider">Kemampuan Bayar Bulanan (Rp)</label>
+                    <label className="text-xs font-semibold text-slate-500 uppercase tracking-wider">Kemampuan Bayar Bulanan (Rp)</label>
                     <input
                       type="number"
                       value={calcPay}
                       onChange={(e) => setCalcPay(e.target.value)}
-                      className="w-full bg-slate-900 border border-slate-800 rounded-xl px-4 py-3 text-slate-200 text-sm focus:outline-none focus:border-purple-500"
+                      className="w-full bg-white border border-slate-200 rounded-xl px-4 py-3 text-slate-800 text-sm focus:outline-none focus:border-emerald-500"
                       placeholder="Contoh: 1500000"
                     />
                   </div>
@@ -273,29 +273,29 @@ export const Login: React.FC = () => {
                 <button
                   disabled={!calcDebt || !calcPay}
                   onClick={() => setShowResult(true)}
-                  className="w-full py-3.5 bg-purple-600 hover:bg-purple-700 disabled:opacity-50 text-white font-bold rounded-xl text-xs transition-colors shadow-md shadow-purple-600/10 cursor-pointer mt-2"
+                  className="w-full py-3.5 bg-emerald-600 hover:bg-emerald-700 disabled:opacity-50 text-white font-bold rounded-xl text-xs transition-colors shadow-md shadow-emerald-600/10 cursor-pointer mt-2"
                 >
                   Hitung Estimasi Lunas
                 </button>
               </div>
             ) : (
               <div className="space-y-5">
-                <div className="p-5 rounded-2xl bg-purple-500/10 border border-purple-500/20 text-center space-y-2">
-                  <p className="text-xs font-bold text-purple-400 uppercase tracking-widest">Estimasi Bebas Hutang</p>
-                  <p className="text-4xl font-extrabold text-slate-100">
-                    {estMonths} <span className="text-lg font-medium text-slate-400">Bulan</span>
+                <div className="p-5 rounded-2xl bg-emerald-500/10 border border-emerald-500/20 text-center space-y-2">
+                  <p className="text-xs font-bold text-emerald-600 uppercase tracking-widest">Estimasi Bebas Hutang</p>
+                  <p className="text-4xl font-extrabold text-slate-800">
+                    {estMonths} <span className="text-lg font-medium text-slate-500">Bulan</span>
                   </p>
-                  <p className="text-xs text-slate-400">
-                    Jika kamu konsisten membayar sebesar <strong className="text-slate-200">{formatRupiah(monthlyPay)}</strong> per bulan.
+                  <p className="text-xs text-slate-500">
+                    Jika kamu konsisten membayar sebesar <strong className="text-slate-800">{formatRupiah(monthlyPay)}</strong> per bulan.
                   </p>
                 </div>
 
-                <div className="glass-panel p-4 rounded-xl border border-slate-800/80 space-y-3">
+                <div className="glass-panel p-4 rounded-xl border border-slate-200 space-y-3">
                   <div className="flex gap-2">
-                    <TrendingDown className="text-emerald-400 shrink-0 mt-0.5" size={16} />
+                    <TrendingDown className="text-emerald-500 shrink-0 mt-0.5" size={16} />
                     <div className="space-y-1">
-                      <p className="text-xs font-bold text-slate-200">Tips untuk kondisimu saat ini:</p>
-                      <p className="text-[11px] text-slate-400 leading-relaxed">
+                      <p className="text-xs font-bold text-slate-800">Tips untuk kondisimu saat ini:</p>
+                      <p className="text-[11px] text-slate-500 leading-relaxed">
                         {estMonths > 12 
                           ? "Perjalanan lunas membutuhkan waktu lebih dari setahun. Sebaiknya gunakan strategi pelunasan Avalanche untuk menekan total bunga cicilan."
                           : "Keren, kamu bisa lunas dalam waktu kurang dari setahun! Tetap konsisten dan pantau terus riwayat bayar kamu agar tidak terlambat."}
@@ -306,7 +306,7 @@ export const Login: React.FC = () => {
 
                 <button
                   onClick={() => setStep('auth')}
-                  className="w-full py-4 bg-purple-600 hover:bg-purple-700 text-white font-bold rounded-2xl transition-all duration-200 shadow-lg shadow-purple-600/20 hover:shadow-purple-600/40 flex items-center justify-center gap-2 text-xs cursor-pointer"
+                  className="w-full py-4 bg-emerald-600 hover:bg-emerald-700 text-white font-bold rounded-2xl transition-all duration-200 shadow-lg shadow-emerald-600/20 hover:shadow-emerald-600/40 flex items-center justify-center gap-2 text-xs cursor-pointer"
                 >
                   <span>Simpan Rencana & Mulai Catat</span>
                   <ArrowRight size={14} />
@@ -321,20 +321,20 @@ export const Login: React.FC = () => {
           <div className="space-y-6">
             {/* Header */}
             <div className="text-center">
-              <div className="inline-flex p-3 rounded-2xl bg-purple-500/10 border border-purple-500/20 text-purple-400 mb-3">
+              <div className="inline-flex p-3 rounded-2xl bg-emerald-500/10 border border-emerald-500/20 text-emerald-600 mb-3">
                 <ShieldCheck size={28} />
               </div>
-              <h1 className="text-2xl font-extrabold text-slate-100 tracking-tight">
+              <h1 className="text-2xl font-extrabold text-slate-800 tracking-tight">
                 {isRegister ? 'Buat Akun Baru' : 'Masuk ke BebasHutang'}
               </h1>
-              <p className="text-slate-400 text-xs mt-1.5 uppercase font-bold tracking-wider">
+              <p className="text-slate-500 text-xs mt-1.5 uppercase font-bold tracking-wider">
                 Zeth Finance Management System
               </p>
             </div>
 
             {/* Error Notification */}
             {errorMessage && (
-              <div className="p-4 rounded-xl bg-rose-500/10 border border-rose-500/25 text-rose-400 text-xs flex items-start gap-2.5">
+              <div className="p-4 rounded-xl bg-rose-500/10 border border-rose-500/25 text-rose-600 text-xs flex items-start gap-2.5">
                 <AlertCircle size={18} className="shrink-0 mt-0.5" />
                 <span>{errorMessage}</span>
               </div>
@@ -342,7 +342,7 @@ export const Login: React.FC = () => {
 
             {/* Success Notification */}
             {successMessage && (
-              <div className="p-4 rounded-xl bg-emerald-500/10 border border-emerald-500/25 text-emerald-400 text-xs flex items-start gap-2.5">
+              <div className="p-4 rounded-xl bg-emerald-500/10 border border-emerald-500/25 text-emerald-600 text-xs flex items-start gap-2.5">
                 <CheckCircle2 size={18} className="shrink-0 mt-0.5" />
                 <span>{successMessage}</span>
               </div>
@@ -352,9 +352,9 @@ export const Login: React.FC = () => {
             <form onSubmit={handleAuth} className="space-y-4">
               {isRegister && (
                 <div className="space-y-1.5">
-                  <label className="text-xs font-semibold text-slate-400 uppercase tracking-wider">Nama Lengkap</label>
+                  <label className="text-xs font-semibold text-slate-500 uppercase tracking-wider">Nama Lengkap</label>
                   <div className="relative">
-                    <span className="absolute left-4 top-3.5 text-slate-500">
+                    <span className="absolute left-4 top-3.5 text-slate-400">
                       <User size={16} />
                     </span>
                     <input
@@ -362,7 +362,7 @@ export const Login: React.FC = () => {
                       required
                       value={fullName}
                       onChange={(e) => setFullName(e.target.value)}
-                      className="w-full bg-slate-900/60 border border-slate-800 rounded-xl pl-11 pr-4 py-3 text-slate-200 placeholder-slate-600 focus:outline-none focus:border-purple-500 transition-colors text-sm"
+                      className="w-full bg-white border border-slate-200 rounded-xl pl-11 pr-4 py-3 text-slate-800 placeholder-slate-400 focus:outline-none focus:border-emerald-500 transition-colors text-sm"
                       placeholder="Contoh: Budi Santoso"
                     />
                   </div>
@@ -370,9 +370,9 @@ export const Login: React.FC = () => {
               )}
 
               <div className="space-y-1.5">
-                <label className="text-xs font-semibold text-slate-400 uppercase tracking-wider">Alamat Email</label>
+                <label className="text-xs font-semibold text-slate-500 uppercase tracking-wider">Alamat Email</label>
                 <div className="relative">
-                  <span className="absolute left-4 top-3.5 text-slate-500">
+                  <span className="absolute left-4 top-3.5 text-slate-400">
                     <Mail size={16} />
                   </span>
                   <input
@@ -380,16 +380,16 @@ export const Login: React.FC = () => {
                     required
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
-                    className="w-full bg-slate-900/60 border border-slate-800 rounded-xl pl-11 pr-4 py-3 text-slate-200 placeholder-slate-600 focus:outline-none focus:border-purple-500 transition-colors text-sm"
+                    className="w-full bg-white border border-slate-200 rounded-xl pl-11 pr-4 py-3 text-slate-800 placeholder-slate-400 focus:outline-none focus:border-emerald-500 transition-colors text-sm"
                     placeholder="nama@email.com"
                   />
                 </div>
               </div>
 
               <div className="space-y-1.5">
-                <label className="text-xs font-semibold text-slate-400 uppercase tracking-wider">Kata Sandi</label>
+                <label className="text-xs font-semibold text-slate-500 uppercase tracking-wider">Kata Sandi</label>
                 <div className="relative">
-                  <span className="absolute left-4 top-3.5 text-slate-500">
+                  <span className="absolute left-4 top-3.5 text-slate-400">
                     <Lock size={16} />
                   </span>
                   <input
@@ -397,7 +397,7 @@ export const Login: React.FC = () => {
                     required
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
-                    className="w-full bg-slate-900/60 border border-slate-800 rounded-xl pl-11 pr-4 py-3 text-slate-200 placeholder-slate-600 focus:outline-none focus:border-purple-500 transition-colors text-sm"
+                    className="w-full bg-white border border-slate-200 rounded-xl pl-11 pr-4 py-3 text-slate-800 placeholder-slate-400 focus:outline-none focus:border-emerald-500 transition-colors text-sm"
                     placeholder="••••••••"
                   />
                 </div>
@@ -406,7 +406,7 @@ export const Login: React.FC = () => {
               <button
                 type="submit"
                 disabled={loading}
-                className="w-full py-3.5 bg-purple-600 hover:bg-purple-700 disabled:opacity-50 text-white font-medium rounded-xl mt-6 transition-all duration-200 shadow-lg shadow-purple-600/10 hover:shadow-purple-600/25 flex items-center justify-center text-sm cursor-pointer"
+                className="w-full py-3.5 bg-emerald-600 hover:bg-emerald-700 disabled:opacity-50 text-white font-medium rounded-xl mt-6 transition-all duration-200 shadow-lg shadow-emerald-600/10 hover:shadow-emerald-600/25 flex items-center justify-center text-sm cursor-pointer"
               >
                 {loading ? (
                   <span className="flex items-center gap-2">
@@ -421,14 +421,14 @@ export const Login: React.FC = () => {
 
             {/* Toggle link */}
             <div className="mt-8 text-center">
-              <p className="text-slate-400 text-xs">
+              <p className="text-slate-500 text-xs">
                 {isRegister ? 'Sudah punya akun?' : 'Belum punya akun?'}{' '}
                 <button
                   onClick={() => {
                     setIsRegister(!isRegister)
                     setErrorMessage('')
                   }}
-                  className="text-purple-400 hover:text-purple-300 font-bold hover:underline transition-all"
+                  className="text-emerald-600 hover:text-emerald-500 font-bold hover:underline transition-all"
                 >
                   {isRegister ? 'Masuk di sini' : 'Daftar di sini'}
                 </button>

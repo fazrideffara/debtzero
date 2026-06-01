@@ -135,11 +135,11 @@ export const SettingsPage: React.FC = () => {
     <div className="space-y-6">
       {/* Header */}
       <div>
-        <h1 className="text-3xl font-extrabold text-slate-100 tracking-tight flex items-center gap-2">
-          <Settings className="text-purple-500" />
+        <h1 className="text-3xl font-extrabold text-slate-900 tracking-tight flex items-center gap-2">
+          <Settings className="text-emerald-500" />
           Pengaturan
         </h1>
-        <p className="text-slate-400 text-sm">
+        <p className="text-slate-550 text-sm">
           Atur gaji bulanan, pengeluaran, bot Telegram, dan kunci API Gemini kamu di sini.
         </p>
       </div>
@@ -147,8 +147,8 @@ export const SettingsPage: React.FC = () => {
       {message && (
         <div className={`p-4 rounded-xl flex items-start gap-3 border ${
           message.type === 'success' 
-            ? 'bg-emerald-500/10 border-emerald-500/20 text-emerald-400' 
-            : 'bg-rose-500/10 border-rose-500/20 text-rose-400'
+            ? 'bg-emerald-50 border-emerald-250 text-emerald-700' 
+            : 'bg-rose-50 border-rose-200 text-rose-700'
         }`}>
           {message.type === 'success' ? <CheckCircle2 size={18} /> : <AlertCircle size={18} />}
           <span className="text-sm font-medium">{message.text}</span>
@@ -157,67 +157,67 @@ export const SettingsPage: React.FC = () => {
 
       <form onSubmit={handleSave} className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {/* Financial Baseline */}
-        <div className="glass-card p-6 rounded-2xl border border-slate-800/80 space-y-4">
-          <h2 className="text-lg font-bold text-slate-200">Kebutuhan Finansial</h2>
-          <hr className="border-slate-800" />
+        <div className="glass-card p-6 rounded-2xl border border-slate-200 space-y-4">
+          <h2 className="text-lg font-bold text-slate-800">Kebutuhan Finansial</h2>
+          <hr className="border-slate-200" />
           
           <div className="space-y-2">
-            <label className="text-xs font-semibold text-slate-400 uppercase tracking-wider">Gaji / Pendapatan Bulanan (Rp)</label>
+            <label className="text-xs font-semibold text-slate-500 uppercase tracking-wider">Gaji / Pendapatan Bulanan (Rp)</label>
             <input
               type="number"
               value={income}
               onChange={(e) => setIncome(e.target.value)}
-              className="w-full bg-slate-900/60 border border-slate-800 rounded-xl px-4 py-3 text-slate-200 focus:outline-none focus:border-purple-500 transition-colors text-sm"
+              className="w-full bg-white border border-slate-200 rounded-xl px-4 py-3 text-slate-800 focus:outline-none focus:border-emerald-500 transition-colors text-sm"
               placeholder="0"
             />
           </div>
 
           <div className="space-y-2">
-            <label className="text-xs font-semibold text-slate-400 uppercase tracking-wider">Pengeluaran Bulanan (Rp)</label>
+            <label className="text-xs font-semibold text-slate-500 uppercase tracking-wider">Pengeluaran Bulanan (Rp)</label>
             <input
               type="number"
               value={expense}
               onChange={(e) => setExpense(e.target.value)}
-              className="w-full bg-slate-900/60 border border-slate-800 rounded-xl px-4 py-3 text-slate-200 focus:outline-none focus:border-purple-500 transition-colors text-sm"
+              className="w-full bg-white border border-slate-200 rounded-xl px-4 py-3 text-slate-800 focus:outline-none focus:border-emerald-500 transition-colors text-sm"
               placeholder="0"
             />
           </div>
         </div>
 
         {/* Integration Credentials */}
-        <div className="glass-card p-6 rounded-2xl border border-slate-800/80 space-y-4">
-          <h2 className="text-lg font-bold text-slate-200">Integrasi API & Telegram Bot</h2>
-          <hr className="border-slate-800" />
+        <div className="glass-card p-6 rounded-2xl border border-slate-200 space-y-4">
+          <h2 className="text-lg font-bold text-slate-800">Integrasi API & Telegram Bot</h2>
+          <hr className="border-slate-200" />
 
           <div className="space-y-2">
-            <label className="text-xs font-semibold text-slate-400 uppercase tracking-wider">Gemini API Key (Buat scan tagihan)</label>
+            <label className="text-xs font-semibold text-slate-500 uppercase tracking-wider">Gemini API Key (Buat scan tagihan)</label>
             <input
               type="password"
               value={apiKey}
               onChange={(e) => setApiKey(e.target.value)}
-              className="w-full bg-slate-900/60 border border-slate-800 rounded-xl px-4 py-3 text-slate-200 focus:outline-none focus:border-purple-500 transition-colors text-sm"
+              className="w-full bg-white border border-slate-200 rounded-xl px-4 py-3 text-slate-800 focus:outline-none focus:border-emerald-500 transition-colors text-sm"
               placeholder="••••••••••••••••"
             />
           </div>
 
           <div className="space-y-2">
-            <label className="text-xs font-semibold text-slate-400 uppercase tracking-wider">Telegram BOT Token</label>
+            <label className="text-xs font-semibold text-slate-500 uppercase tracking-wider">Telegram BOT Token</label>
             <input
               type="password"
               value={botToken}
               onChange={(e) => setBotToken(e.target.value)}
-              className="w-full bg-slate-900/60 border border-slate-800 rounded-xl px-4 py-3 text-slate-200 focus:outline-none focus:border-purple-500 transition-colors text-sm"
+              className="w-full bg-white border border-slate-200 rounded-xl px-4 py-3 text-slate-800 focus:outline-none focus:border-emerald-500 transition-colors text-sm"
               placeholder="••••••••••••••••"
             />
           </div>
 
           <div className="space-y-2">
-            <label className="text-xs font-semibold text-slate-400 uppercase tracking-wider">Telegram Chat ID</label>
+            <label className="text-xs font-semibold text-slate-500 uppercase tracking-wider">Telegram Chat ID</label>
             <input
               type="text"
               value={chatId}
               onChange={(e) => setChatId(e.target.value)}
-              className="w-full bg-slate-900/60 border border-slate-800 rounded-xl px-4 py-3 text-slate-200 focus:outline-none focus:border-purple-500 transition-colors text-sm"
+              className="w-full bg-white border border-slate-200 rounded-xl px-4 py-3 text-slate-800 focus:outline-none focus:border-emerald-500 transition-colors text-sm"
               placeholder="Contoh: 123456789"
             />
           </div>
@@ -228,9 +228,9 @@ export const SettingsPage: React.FC = () => {
               id="notifToggle"
               checked={notifEnabled}
               onChange={(e) => setNotifEnabled(e.target.checked)}
-              className="w-4 h-4 rounded text-purple-600 focus:ring-purple-500 border-slate-800 bg-slate-900"
+              className="w-4 h-4 rounded text-emerald-600 focus:ring-emerald-500 border-slate-200 bg-white"
             />
-            <label htmlFor="notifToggle" className="text-xs font-semibold text-slate-300 select-none cursor-pointer">
+            <label htmlFor="notifToggle" className="text-xs font-semibold text-slate-650 select-none cursor-pointer">
               Aktifkan reminder & notifikasi jatuh tempo via Telegram
             </label>
           </div>
@@ -241,7 +241,7 @@ export const SettingsPage: React.FC = () => {
           <button
             type="submit"
             disabled={loading}
-            className="flex items-center gap-2 px-6 py-3 rounded-xl bg-purple-600 hover:bg-purple-700 disabled:opacity-50 text-white font-bold shadow-md transition-colors text-xs cursor-pointer"
+            className="flex items-center gap-2 px-6 py-3 rounded-xl bg-emerald-600 hover:bg-emerald-700 disabled:opacity-50 text-white font-bold shadow-md transition-colors text-xs cursor-pointer"
           >
             {loading ? <Loader2 size={16} className="animate-spin" /> : <Save size={16} />}
             <span>{loading ? 'Menyimpan...' : 'Simpan Pengaturan'}</span>
@@ -250,19 +250,19 @@ export const SettingsPage: React.FC = () => {
       </form>
 
       {/* DANGER ZONE: DATA CLEANUP & RESET */}
-      <div className="glass-card p-6 md:p-8 rounded-3xl border border-red-950/40 space-y-4 bg-red-950/5 relative overflow-hidden">
+      <div className="glass-card p-6 md:p-8 rounded-3xl border border-red-200 space-y-4 bg-red-50/50 relative overflow-hidden">
         <div className="absolute top-0 right-0 w-32 h-32 bg-red-500/5 rounded-full blur-3xl"></div>
         
-        <h2 className="text-lg font-bold text-red-400 flex items-center gap-2">
+        <h2 className="text-lg font-bold text-red-650 flex items-center gap-2">
           <AlertCircle size={20} />
           Zona Bahaya ⚠️
         </h2>
-        <hr className="border-red-950/20" />
+        <hr className="border-red-200" />
         
         <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
           <div className="space-y-1">
-            <p className="text-sm font-bold text-slate-200">Hapus Seluruh Data Hutang</p>
-            <p className="text-slate-400 text-xs leading-relaxed max-w-xl">
+            <p className="text-sm font-bold text-slate-800">Hapus Seluruh Data Hutang</p>
+            <p className="text-slate-500 text-xs leading-relaxed max-w-xl">
               Tombol di bawah ini bakal ngehapus semua data hutang, pembayaran, dan log notifikasi kamu secara permanen dari server database Supabase. Aksi ini gak bisa dibatalin ya, Bos!
             </p>
           </div>
@@ -271,7 +271,7 @@ export const SettingsPage: React.FC = () => {
             type="button"
             disabled={resetLoading}
             onClick={() => setShowConfirmModal(true)}
-            className="flex items-center justify-center gap-2 px-5 py-3 rounded-xl border border-red-500/30 bg-red-950/10 hover:bg-red-500/20 text-red-400 hover:text-white font-bold transition-all text-xs cursor-pointer shrink-0 shadow-md"
+            className="flex items-center justify-center gap-2 px-5 py-3 rounded-xl border border-red-500/30 bg-red-50 hover:bg-red-100 text-red-600 hover:text-red-750 font-bold transition-all text-xs cursor-pointer shrink-0 shadow-md"
           >
             {resetLoading ? <Loader2 size={14} className="animate-spin" /> : <Trash2 size={14} />}
             <span>{resetLoading ? 'Sedang Menghapus...' : 'Bersihkan Semua Data'}</span>
@@ -281,28 +281,28 @@ export const SettingsPage: React.FC = () => {
 
       {/* Custom Confirmation Modal Overlay (ZARA/NOVA requirements) */}
       {showConfirmModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-sm">
-          <div className="w-full max-w-md glass-card p-6 md:p-8 rounded-3xl border border-red-500/30 space-y-6">
-            <div className="flex items-center gap-3 text-red-400">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/40 backdrop-blur-sm">
+          <div className="w-full max-w-md glass-card p-6 md:p-8 rounded-3xl border border-red-200 space-y-6">
+            <div className="flex items-center gap-3 text-red-600">
               <AlertCircle size={28} />
               <h2 className="text-xl font-bold">Konfirmasi Hapus Data</h2>
             </div>
-            <hr className="border-slate-800" />
-            <p className="text-slate-300 text-sm leading-relaxed">
+            <hr className="border-slate-200" />
+            <p className="text-slate-650 text-sm leading-relaxed">
               Apakah kamu beneran yakin mau menghapus semua data hutang, pembayaran, dan log reminder secara permanen? Aksi ini <b>TIDAK BISA</b> dibatalkan!
             </p>
             <div className="flex items-center justify-end gap-3 pt-2">
               <button
                 type="button"
                 onClick={() => setShowConfirmModal(false)}
-                className="px-4 py-2.5 rounded-xl border border-slate-800 text-slate-400 hover:text-white hover:bg-slate-900 transition-colors text-xs font-semibold cursor-pointer"
+                className="px-4 py-2.5 rounded-xl border border-slate-200 text-slate-500 hover:text-slate-800 hover:bg-slate-100 transition-colors text-xs font-semibold cursor-pointer"
               >
                 Batal
               </button>
               <button
                 type="button"
                 onClick={handleResetConfirm}
-                className="px-4 py-2.5 rounded-xl bg-red-600 hover:bg-red-700 text-white font-bold transition-colors text-xs cursor-pointer shadow-md"
+                className="px-4 py-2.5 rounded-xl bg-red-650 hover:bg-red-750 text-white font-bold transition-colors text-xs cursor-pointer shadow-md"
               >
                 Ya, Hapus Semua
               </button>

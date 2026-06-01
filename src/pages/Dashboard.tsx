@@ -187,7 +187,7 @@ export const Dashboard: React.FC = () => {
   if (loadingDebts || loadingConfig) {
     return (
       <div className="flex flex-col items-center justify-center py-24 gap-3">
-        <div className="w-8 h-8 rounded-full border-4 border-purple-500/20 border-t-purple-500 animate-spin"></div>
+        <div className="w-8 h-8 rounded-full border-4 border-emerald-500/20 border-t-emerald-500 animate-spin"></div>
         <span className="text-slate-500 text-xs font-medium">Memuat dashboard BebasHutang...</span>
       </div>
     )
@@ -198,20 +198,20 @@ export const Dashboard: React.FC = () => {
       {/* Header */}
       <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
         <div>
-          <h1 className="text-3xl font-extrabold text-slate-100 tracking-tight flex items-center gap-2">
-            <LayoutDashboard className="text-purple-500" />
+          <h1 className="text-3xl font-extrabold text-slate-900 tracking-tight flex items-center gap-2">
+            <LayoutDashboard className="text-emerald-500" />
             Dashboard Utama
           </h1>
-          <p className="text-slate-400 text-sm">
+          <p className="text-slate-500 text-sm">
             Status kesehatan keuangan personal Anda berdasarkan rasio hutang saat ini.
           </p>
         </div>
         <div className="flex items-center gap-2">
-          <span className="text-xs font-bold text-slate-400 uppercase">Status Risiko:</span>
+          <span className="text-xs font-bold text-slate-500 uppercase">Status Risiko:</span>
           <span className={`px-3 py-1 rounded-full text-xs font-bold ${
-            globalRisk === 'red' ? 'bg-rose-500/10 text-rose-400 border border-rose-500/20' :
-            globalRisk === 'yellow' ? 'bg-amber-500/10 text-amber-400 border border-amber-500/20' :
-            'bg-emerald-500/10 text-emerald-400 border border-emerald-500/20'
+            globalRisk === 'red' ? 'bg-rose-100 text-rose-700 border border-rose-200' :
+            globalRisk === 'yellow' ? 'bg-amber-100 text-amber-700 border border-amber-200' :
+            'bg-emerald-100 text-emerald-750 border border-emerald-200'
           }`}>
             {globalRisk === 'red' ? '🔴 Bahaya (Harap Bayar)' : 
              globalRisk === 'yellow' ? '🟡 Peringatan (Rasio DSR Tinggi / Jatuh Tempo Dekat)' : 
@@ -223,41 +223,41 @@ export const Dashboard: React.FC = () => {
       {/* Summary Cards */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         {/* Total Outstanding */}
-        <div className="glass-card p-6 rounded-2xl border border-slate-800/80 shadow-lg relative overflow-hidden">
-          <div className="absolute top-0 right-0 w-24 h-24 bg-purple-500/5 rounded-full blur-2xl"></div>
-          <p className="text-xs font-bold text-purple-400 uppercase tracking-widest">Total Sisa Hutang</p>
-          <p className="text-3xl font-bold mt-2 text-slate-200">{formatRupiah(calculations.totalDebt)}</p>
-          <div className="flex items-center gap-1.5 mt-4 text-[11px] text-slate-400">
+        <div className="glass-card p-6 rounded-2xl border border-slate-200 shadow-lg relative overflow-hidden">
+          <div className="absolute top-0 right-0 w-24 h-24 bg-emerald-500/5 rounded-full blur-2xl"></div>
+          <p className="text-xs font-bold text-emerald-600 uppercase tracking-widest">Total Sisa Hutang</p>
+          <p className="text-3xl font-bold mt-2 text-slate-800">{formatRupiah(calculations.totalDebt)}</p>
+          <div className="flex items-center gap-1.5 mt-4 text-[11px] text-slate-500">
             <TrendingDown size={14} className="text-emerald-500" />
             <span>Aktif memantau {debts.length} catatan</span>
           </div>
         </div>
 
         {/* Urgent Debts */}
-        <div className="glass-card p-6 rounded-2xl border border-slate-800/80 shadow-lg relative overflow-hidden">
+        <div className="glass-card p-6 rounded-2xl border border-slate-200 shadow-lg relative overflow-hidden">
           <div className="absolute top-0 right-0 w-24 h-24 bg-rose-500/5 rounded-full blur-2xl"></div>
-          <p className="text-xs font-bold text-rose-400 uppercase tracking-widest">Hutang Urgent (&lt; 3 Hari)</p>
-          <p className="text-3xl font-bold mt-2 text-slate-200">{calculations.urgentCount}</p>
-          <div className="flex items-center gap-1.5 mt-4 text-[11px] text-slate-400">
-            <BellRing size={14} className={calculations.urgentCount > 0 ? 'text-rose-400' : 'text-slate-500'} />
-            <span className={calculations.urgentCount > 0 ? 'text-rose-400 font-bold' : ''}>
+          <p className="text-xs font-bold text-rose-600 uppercase tracking-widest">Hutang Urgent (&lt; 3 Hari)</p>
+          <p className="text-3xl font-bold mt-2 text-slate-800">{calculations.urgentCount}</p>
+          <div className="flex items-center gap-1.5 mt-4 text-[11px] text-slate-500">
+            <BellRing size={14} className={calculations.urgentCount > 0 ? 'text-rose-500' : 'text-slate-400'} />
+            <span className={calculations.urgentCount > 0 ? 'text-rose-600 font-bold' : ''}>
               {calculations.urgentCount > 0 ? 'Ada tagihan segera jatuh tempo' : 'Semua tagihan aman'}
             </span>
           </div>
         </div>
 
         {/* Debt Service Ratio */}
-        <div className="glass-card p-6 rounded-2xl border border-slate-800/80 shadow-lg relative overflow-hidden">
-          <div className="absolute top-0 right-0 w-24 h-24 bg-blue-500/5 rounded-full blur-2xl"></div>
-          <p className="text-xs font-bold text-blue-400 uppercase tracking-widest">Debt Service Ratio (DSR)</p>
-          <p className={`text-3xl font-bold mt-2 ${calculations.dsrWarning ? 'text-rose-400' : 'text-slate-200'}`}>
+        <div className="glass-card p-6 rounded-2xl border border-slate-200 shadow-lg relative overflow-hidden">
+          <div className="absolute top-0 right-0 w-24 h-24 bg-teal-500/5 rounded-full blur-2xl"></div>
+          <p className="text-xs font-bold text-teal-600 uppercase tracking-widest">Debt Service Ratio (DSR)</p>
+          <p className={`text-3xl font-bold mt-2 ${calculations.dsrWarning ? 'text-rose-600' : 'text-slate-800'}`}>
             {calculations.dsr} %
           </p>
-          <div className="flex items-center gap-1.5 mt-4 text-[11px] text-slate-400">
+          <div className="flex items-center gap-1.5 mt-4 text-[11px] text-slate-500">
             {calculations.dsrWarning ? (
               <>
-                <AlertTriangle size={14} className="text-rose-400" />
-                <span className="text-rose-400 font-bold">DSR melebihi ambang batas 35%!</span>
+                <AlertTriangle size={14} className="text-rose-500" />
+                <span className="text-rose-600 font-bold">DSR melebihi ambang batas 35%!</span>
               </>
             ) : (
               <>
@@ -271,10 +271,10 @@ export const Dashboard: React.FC = () => {
 
       {/* DSR Warning Alert Banner */}
       {calculations.dsrWarning && (
-        <div className="p-4 rounded-2xl bg-rose-500/10 border border-rose-500/20 text-rose-400 text-xs font-semibold flex items-center gap-3">
+        <div className="p-4 rounded-2xl bg-rose-50 border border-rose-200 text-rose-700 text-xs font-semibold flex items-center gap-3">
           <AlertTriangle className="shrink-0 animate-bounce" size={18} />
           <p>
-            Rasio hutang bulanan Anda (DSR) berada di atas batas aman 35%. Zeth Finance merekomendasikan Anda untuk tidak menambah hutang baru dan fokus pada pelunasan prioritas (Avalanche/Snowball) di halaman <Link to="/risk" className="underline font-bold text-white hover:text-purple-300">Risk & Strategy</Link>.
+            Rasio hutang bulanan Anda (DSR) berada di atas batas aman 35%. Zeth Finance merekomendasikan Anda untuk tidak menambah hutang baru dan fokus pada pelunasan prioritas (Avalanche/Snowball) di halaman <Link to="/risk" className="underline font-bold text-slate-900 hover:text-emerald-600">Risk & Strategy</Link>.
           </p>
         </div>
       )}
@@ -282,17 +282,17 @@ export const Dashboard: React.FC = () => {
       {/* Grid: Graph and Quick Action Links */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* Recharts Chart Card */}
-        <div className="lg:col-span-2 glass-card p-6 rounded-3xl border border-slate-800/70 space-y-4">
-          <h2 className="text-lg font-bold text-slate-200 flex items-center gap-2">
-            <TrendingDown className="text-purple-500" />
+        <div className="lg:col-span-2 glass-card p-6 rounded-3xl border border-slate-200 space-y-4">
+          <h2 className="text-lg font-bold text-slate-800 flex items-center gap-2">
+            <TrendingDown className="text-emerald-500" />
             Tren Penurunan Total Hutang
           </h2>
-          <hr className="border-slate-800/80" />
+          <hr className="border-slate-200" />
           
           <div className="w-full h-80 pt-4">
             <ResponsiveContainer width="100%" height="100%">
               <LineChart data={chartData} margin={{ top: 10, right: 10, left: 0, bottom: 0 }}>
-                <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.03)" />
+                <CartesianGrid strokeDasharray="3 3" stroke="rgba(0,0,0,0.03)" />
                 <XAxis 
                   dataKey="date" 
                   stroke="#64748b" 
@@ -307,16 +307,16 @@ export const Dashboard: React.FC = () => {
                 />
                 <Tooltip 
                   formatter={(value: any) => [formatRupiah(Number(value)), 'Total Hutang']}
-                  contentStyle={{ backgroundColor: '#0f172a', borderColor: '#1e293b', borderRadius: '12px' }}
-                  labelStyle={{ color: '#94a3b8', fontSize: '11px', fontWeight: 'bold' }}
+                  contentStyle={{ backgroundColor: '#ffffff', borderColor: '#e2e8f0', borderRadius: '12px' }}
+                  labelStyle={{ color: '#64748b', fontSize: '11px', fontWeight: 'bold' }}
                 />
                 <Line 
                   type="monotone" 
                   dataKey="totalDebt" 
-                  stroke="#a855f7" 
+                  stroke="#10b981" 
                   strokeWidth={3} 
-                  dot={{ r: 4, fill: '#c084fc', strokeWidth: 0 }}
-                  activeDot={{ r: 6, fill: '#d8b4fe' }}
+                  dot={{ r: 4, fill: '#34d399', strokeWidth: 0 }}
+                  activeDot={{ r: 6, fill: '#a7f3d0' }}
                 />
               </LineChart>
             </ResponsiveContainer>
@@ -324,32 +324,32 @@ export const Dashboard: React.FC = () => {
         </div>
 
         {/* Quick Strategy Suggestion Box */}
-        <div className="glass-card p-6 rounded-3xl border border-slate-800/70 flex flex-col justify-between">
+        <div className="glass-card p-6 rounded-3xl border border-slate-200 flex flex-col justify-between">
           <div className="space-y-4">
-            <h2 className="text-lg font-bold text-slate-200 flex items-center gap-2">
-              <Sparkles className="text-purple-500 animate-pulse" />
+            <h2 className="text-lg font-bold text-slate-800 flex items-center gap-2">
+              <Sparkles className="text-emerald-500 animate-pulse" />
               Saran Keuangan
             </h2>
-            <hr className="border-slate-800/80" />
+            <hr className="border-slate-200" />
             
-            <p className="text-xs text-slate-400 leading-relaxed font-medium">
-              Sistem BebasHutang mendeteksi Anda memiliki total sisa tagihan sebesar <strong className="text-slate-300 font-bold">{formatRupiah(calculations.totalDebt)}</strong>.
+            <p className="text-xs text-slate-500 leading-relaxed font-medium">
+              Sistem BebasHutang mendeteksi Anda memiliki total sisa tagihan sebesar <strong className="text-slate-700 font-bold">{formatRupiah(calculations.totalDebt)}</strong>.
             </p>
             
             {globalRisk === 'red' ? (
-              <div className="p-3.5 rounded-xl bg-rose-500/10 border border-rose-500/20 text-rose-400 text-xs font-semibold space-y-1">
+              <div className="p-3.5 rounded-xl bg-rose-50 border border-rose-200 text-rose-700 text-xs font-semibold space-y-1">
                 <p>🚨 Tindakan Segera:</p>
-                <p className="font-normal text-slate-300">Ada tagihan dengan jatuh tempo sangat dekat. Segera lakukan perpanjangan gadai atau pembayaran cicilan untuk menghindari denda.</p>
+                <p className="font-normal text-slate-600">Ada tagihan dengan jatuh tempo sangat dekat. Segera lakukan perpanjangan gadai atau pembayaran cicilan untuk menghindari denda.</p>
               </div>
             ) : calculations.dsrWarning ? (
-              <div className="p-3.5 rounded-xl bg-amber-500/10 border border-amber-500/20 text-amber-400 text-xs font-semibold space-y-1">
+              <div className="p-3.5 rounded-xl bg-amber-50 border border-amber-200 text-amber-700 text-xs font-semibold space-y-1">
                 <p>⚠️ Evaluasi Bulanan:</p>
-                <p className="font-normal text-slate-300">Rasio DSR di atas 35% rawan menyebabkan gali lubang tutup lubang. Coba kurangi pengeluaran non-primer bulanan Anda.</p>
+                <p className="font-normal text-slate-600">Rasio DSR di atas 35% rawan menyebabkan gali lubang tutup lubang. Coba kurangi pengeluaran non-primer bulanan Anda.</p>
               </div>
             ) : (
-              <div className="p-3.5 rounded-xl bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-xs font-semibold space-y-1">
+              <div className="p-3.5 rounded-xl bg-emerald-50 border border-emerald-200 text-emerald-700 text-xs font-semibold space-y-1">
                 <p>🟢 Kondisi Sehat:</p>
-                <p className="font-normal text-slate-300">Keuangan bulanan dan rasio hutang Anda berada dalam zona aman. Pertahankan momentum pembayaran teratur ini.</p>
+                <p className="font-normal text-slate-600">Keuangan bulanan dan rasio hutang Anda berada dalam zona aman. Pertahankan momentum pembayaran teratur ini.</p>
               </div>
             )}
           </div>
@@ -357,7 +357,7 @@ export const Dashboard: React.FC = () => {
           <Link
             id="dashboard-strategy-btn"
             to="/risk"
-            className="mt-6 flex items-center justify-center gap-2 py-3 rounded-xl bg-slate-900 hover:bg-slate-850 text-xs font-bold text-purple-400 hover:text-white border border-slate-800 hover:border-purple-500/30 transition-all"
+            className="mt-6 flex items-center justify-center gap-2 py-3 rounded-xl bg-slate-150 hover:bg-emerald-50 text-xs font-bold text-emerald-600 hover:text-emerald-700 border border-slate-200 hover:border-emerald-500/30 transition-all text-center"
           >
             <span>Buka Halaman Strategy</span>
             <ArrowRight size={14} />

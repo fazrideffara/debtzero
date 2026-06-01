@@ -36,19 +36,19 @@ export const AppLayout: React.FC = () => {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-slate-950 flex flex-col items-center justify-center gap-4">
+      <div className="min-h-screen bg-slate-50 flex flex-col items-center justify-center gap-4">
         {/* Spinner or Skeleton */}
         <div className="relative w-12 h-12">
-          <div className="absolute inset-0 rounded-full border-4 border-purple-500/20"></div>
-          <div className="absolute inset-0 rounded-full border-4 border-purple-500 border-t-transparent animate-spin"></div>
+          <div className="absolute inset-0 rounded-full border-4 border-emerald-500/20"></div>
+          <div className="absolute inset-0 rounded-full border-4 border-emerald-500 border-t-transparent animate-spin"></div>
         </div>
-        <p className="text-slate-400 text-sm font-medium tracking-wide animate-pulse">Loading Zeth Finance Platform...</p>
+        <p className="text-slate-500 text-sm font-medium tracking-wide animate-pulse">Loading Zeth Finance Platform...</p>
       </div>
     )
   }
 
   return (
-    <div className="min-h-screen bg-slate-950 text-slate-100 flex flex-col">
+    <div className="min-h-screen bg-slate-50 text-slate-900 flex flex-col">
       {/* Top Navbar */}
       <Navbar 
         userName={user?.user_metadata?.full_name || user?.email?.split('@')[0] || 'Zeth Member'}

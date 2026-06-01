@@ -195,7 +195,7 @@ export const Risk: React.FC = () => {
   if (loadingDebts || loadingConfig) {
     return (
       <div className="flex flex-col items-center justify-center py-24 gap-3">
-        <div className="w-8 h-8 rounded-full border-4 border-purple-500/20 border-t-purple-500 animate-spin"></div>
+        <div className="w-8 h-8 rounded-full border-4 border-emerald-500/20 border-t-emerald-500 animate-spin"></div>
         <span className="text-slate-500 text-xs font-medium">Memuat analisis risiko...</span>
       </div>
     )
@@ -216,11 +216,11 @@ export const Risk: React.FC = () => {
     <div className="space-y-8">
       {/* Header */}
       <div>
-        <h1 className="text-3xl font-extrabold text-slate-100 tracking-tight flex items-center gap-2">
-          <ShieldAlert className="text-purple-500" />
+        <h1 className="text-3xl font-extrabold text-slate-900 tracking-tight flex items-center gap-2">
+          <ShieldAlert className="text-emerald-500" />
           Rasio Cicilan & Strategi Bebas Hutang
         </h1>
-        <p className="text-slate-400 text-sm">
+        <p className="text-slate-500 text-sm">
           Pantau kesehatan keuangan kamu dan simulasikan cara pelunasan yang paling tepat.
         </p>
       </div>
@@ -229,9 +229,9 @@ export const Risk: React.FC = () => {
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         
         {/* DSR SVG CIRCULAR GAUGE WITH INTERACTIVE ADJUSTMENTS */}
-        <div className="glass-card p-6 rounded-3xl border border-slate-800/80 flex flex-col items-center justify-between text-center relative overflow-hidden">
+        <div className="glass-card p-6 rounded-3xl border border-slate-200 flex flex-col items-center justify-between text-center relative overflow-hidden">
           <div className="w-full">
-            <h2 className="text-sm font-bold text-slate-400 uppercase tracking-widest mb-4">Rasio Cicilan (DSR)</h2>
+            <h2 className="text-sm font-bold text-slate-500 uppercase tracking-widest mb-4">Rasio Cicilan (DSR)</h2>
             
             <div className="relative w-40 h-40 mx-auto flex items-center justify-center">
               {/* SVG Circular Ring */}
@@ -240,7 +240,7 @@ export const Risk: React.FC = () => {
                   cx="80"
                   cy="80"
                   r={radius}
-                  className="stroke-slate-800/60"
+                  className="stroke-slate-200"
                   strokeWidth="10"
                   fill="transparent"
                 />
@@ -259,9 +259,9 @@ export const Risk: React.FC = () => {
                 />
               </svg>
               <div className="absolute flex flex-col items-center justify-center">
-                <span className="text-3xl font-extrabold text-slate-100">{totals.dsr}%</span>
+                <span className="text-3xl font-extrabold text-slate-800">{totals.dsr}%</span>
                 <span className={`text-[9px] font-extrabold uppercase px-1.5 py-0.5 rounded-full mt-1 ${
-                  totals.dsr > 35 ? 'bg-red-500/10 text-red-400' : 'bg-emerald-500/10 text-emerald-400'
+                  totals.dsr > 35 ? 'bg-red-100 text-red-700' : 'bg-emerald-100 text-emerald-700'
                 }`}>
                   {totals.dsr > 35 ? '🔴 Bahaya (>35%)' : '🟢 Aman (≤35%)'}
                 </span>
@@ -269,8 +269,8 @@ export const Risk: React.FC = () => {
             </div>
 
             <div className="mt-5 space-y-1">
-              <p className="text-xs text-slate-300 font-medium">
-                Total Cicilan Bulanan: <strong className="text-white">{formatRupiah(totals.totalMonthlyCommitment)}</strong>
+              <p className="text-xs text-slate-650 font-medium">
+                Total Cicilan Bulanan: <strong className="text-slate-800">{formatRupiah(totals.totalMonthlyCommitment)}</strong>
               </p>
               <p className="text-[10px] text-slate-500 font-bold uppercase">
                 Gaji Bulanan Kamu: {formatRupiah(totals.income)}
@@ -279,14 +279,14 @@ export const Risk: React.FC = () => {
           </div>
 
           {/* Interactive controls */}
-          <div className="w-full mt-6 pt-4 border-t border-slate-800/80 space-y-4 text-left">
-            <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">Coba Simulasikan Keuanganmu</span>
+          <div className="w-full mt-6 pt-4 border-t border-slate-200 space-y-4 text-left">
+            <span className="text-[10px] font-bold text-slate-500 uppercase tracking-wider block">Coba Simulasikan Keuanganmu</span>
             
              {/* Income Slider */}
             <div className="space-y-1">
               <div className="flex justify-between text-[10px]">
-                <span className="text-slate-400">Simulasi Gaji Bulanan</span>
-                <span className="font-semibold text-slate-200">
+                <span className="text-slate-500">Simulasi Gaji Bulanan</span>
+                <span className="font-semibold text-slate-800">
                   {simulatedIncomeOffset >= 0 ? '+' : ''}{formatRupiah(simulatedIncomeOffset)}
                 </span>
               </div>
@@ -297,15 +297,15 @@ export const Risk: React.FC = () => {
                 step={500000}
                 value={simulatedIncomeOffset}
                 onChange={(e) => setSimulatedIncomeOffset(Number(e.target.value))}
-                className="w-full accent-purple-500 h-1 bg-slate-800 rounded-lg cursor-pointer"
+                className="w-full accent-emerald-500 h-1 bg-slate-200 rounded-lg cursor-pointer"
               />
             </div>
 
             {/* Installment Slider */}
             <div className="space-y-1">
               <div className="flex justify-between text-[10px]">
-                <span className="text-slate-400">Simulasi Nambah Cicilan Baru</span>
-                <span className="font-semibold text-slate-200">+{formatRupiah(simulatedCommitmentOffset)}</span>
+                <span className="text-slate-500">Simulasi Nambah Cicilan Baru</span>
+                <span className="font-semibold text-slate-800">+{formatRupiah(simulatedCommitmentOffset)}</span>
               </div>
               <input
                 type="range"
@@ -314,7 +314,7 @@ export const Risk: React.FC = () => {
                 step={250000}
                 value={simulatedCommitmentOffset}
                 onChange={(e) => setSimulatedCommitmentOffset(Number(e.target.value))}
-                className="w-full accent-purple-500 h-1 bg-slate-800 rounded-lg cursor-pointer"
+                className="w-full accent-emerald-500 h-1 bg-slate-200 rounded-lg cursor-pointer"
               />
             </div>
 
@@ -324,7 +324,7 @@ export const Risk: React.FC = () => {
                   setSimulatedIncomeOffset(0)
                   setSimulatedCommitmentOffset(0)
                 }}
-                className="w-full py-1.5 bg-slate-900 border border-slate-800 hover:border-slate-700 text-[10px] text-slate-300 rounded-lg flex items-center justify-center gap-1.5 cursor-pointer transition-colors"
+                className="w-full py-1.5 bg-slate-100 border border-slate-200 hover:border-slate-350 text-[10px] text-slate-700 rounded-lg flex items-center justify-center gap-1.5 cursor-pointer transition-colors"
               >
                 <RefreshCw size={10} />
                 Kembalikan ke Awal (Reset)
@@ -334,17 +334,17 @@ export const Risk: React.FC = () => {
         </div>
 
         {/* STRATEGY RECOMMENDATIONS COMPARATOR (Snowball vs Avalanche Side-by-Side) */}
-        <div className="lg:col-span-2 glass-card p-6 rounded-3xl border border-slate-800/80 flex flex-col justify-between">
+        <div className="lg:col-span-2 glass-card p-6 rounded-3xl border border-slate-200 flex flex-col justify-between">
           <div className="space-y-4">
             <div className="flex items-center justify-between">
-              <h2 className="text-sm font-bold text-slate-400 uppercase tracking-widest">Rekomendasi Metode Pelunasan</h2>
+              <h2 className="text-sm font-bold text-slate-500 uppercase tracking-widest">Rekomendasi Metode Pelunasan</h2>
               <div className="flex items-center gap-2">
                 <span className="text-[10px] font-bold uppercase tracking-wider text-slate-500">Metode Terpilih:</span>
-                <div className="flex bg-slate-900 border border-slate-800 p-0.5 rounded-lg">
+                <div className="flex bg-slate-100 border border-slate-200 p-0.5 rounded-lg">
                   <button
                     onClick={() => setSelectedStrategy('snowball')}
                     className={`px-2.5 py-1 rounded-md text-[9px] font-extrabold uppercase tracking-wider transition-all cursor-pointer ${
-                      selectedStrategy === 'snowball' ? 'bg-purple-600 text-white' : 'text-slate-400 hover:text-white'
+                      selectedStrategy === 'snowball' ? 'bg-emerald-600 text-white' : 'text-slate-500 hover:text-slate-800'
                     }`}
                   >
                     Snowball
@@ -352,7 +352,7 @@ export const Risk: React.FC = () => {
                   <button
                     onClick={() => setSelectedStrategy('avalanche')}
                     className={`px-2.5 py-1 rounded-md text-[9px] font-extrabold uppercase tracking-wider transition-all cursor-pointer ${
-                      selectedStrategy === 'avalanche' ? 'bg-purple-600 text-white' : 'text-slate-400 hover:text-white'
+                      selectedStrategy === 'avalanche' ? 'bg-emerald-600 text-white' : 'text-slate-500 hover:text-slate-800'
                     }`}
                   >
                     Avalanche
@@ -361,25 +361,25 @@ export const Risk: React.FC = () => {
               </div>
             </div>
             
-            <hr className="border-slate-800/80" />
+            <hr className="border-slate-200" />
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               {/* Method A Info */}
               <div className={`p-4 rounded-2xl border transition-all ${
-                selectedStrategy === 'snowball' ? 'bg-purple-950/20 border-purple-500/30' : 'bg-slate-900/40 border-slate-800/80'
+                selectedStrategy === 'snowball' ? 'bg-emerald-50 border-emerald-500/30' : 'bg-slate-50 border-slate-200'
               }`}>
                 <div className="flex items-center gap-2 mb-2">
-                  <TrendingDown className="text-purple-400" size={16} />
-                  <span className="text-xs font-bold text-slate-200">Snowball ❄️ (Fokus Nominal Kecil)</span>
+                  <TrendingDown className="text-emerald-600" size={16} />
+                  <span className="text-xs font-bold text-slate-800">Snowball ❄️ (Fokus Nominal Kecil)</span>
                 </div>
-                <p className="text-[11px] text-slate-400 leading-relaxed mb-3">
+                <p className="text-[11px] text-slate-550 leading-relaxed mb-3">
                   Urutin tagihan kamu dari sisa nominal terkecil ke terbesar. Sangat direkomendasikan biar dapet rasa puas/lega duluan pas ada hutang yang beres!
                 </p>
                 <div className="space-y-1.5 max-h-[140px] overflow-y-auto pr-1">
                   {snowballList.map((item, idx) => (
-                    <div key={item.id} className="bg-slate-950/50 p-2 rounded-lg border border-slate-850 flex items-center justify-between text-[11px]">
-                      <span className="text-slate-400 font-bold">#{idx + 1} {item.creditor_name}</span>
-                      <span className="text-slate-200 font-semibold">{formatRupiah(item.remaining_amount)}</span>
+                    <div key={item.id} className="bg-white p-2 rounded-lg border border-slate-200 flex items-center justify-between text-[11px]">
+                      <span className="text-slate-500 font-bold">#{idx + 1} {item.creditor_name}</span>
+                      <span className="text-slate-800 font-semibold">{formatRupiah(item.remaining_amount)}</span>
                     </div>
                   ))}
                   {snowballList.length === 0 && <span className="text-[11px] text-slate-500 italic">Tidak ada hutang aktif</span>}
@@ -388,20 +388,20 @@ export const Risk: React.FC = () => {
 
               {/* Method B Info */}
               <div className={`p-4 rounded-2xl border transition-all ${
-                selectedStrategy === 'avalanche' ? 'bg-purple-950/20 border-purple-500/30' : 'bg-slate-900/40 border-slate-800/80'
+                selectedStrategy === 'avalanche' ? 'bg-emerald-50 border-emerald-500/30' : 'bg-slate-50 border-slate-200'
               }`}>
                 <div className="flex items-center gap-2 mb-2">
-                  <Percent className="text-purple-400" size={16} />
-                  <span className="text-xs font-bold text-slate-200">Avalanche ⚡ (Hajar Bunga Terbesar)</span>
+                  <Percent className="text-emerald-600" size={16} />
+                  <span className="text-xs font-bold text-slate-800">Avalanche ⚡ (Hajar Bunga Terbesar)</span>
                 </div>
-                <p className="text-[11px] text-slate-400 leading-relaxed mb-3">
+                <p className="text-[11px] text-slate-550 leading-relaxed mb-3">
                   Urutin tagihan kamu berdasarkan bunga tertinggi ke terendah. Paling hemat karena langsung nekan akumulasi biaya bunga berjalan!
                 </p>
                 <div className="space-y-1.5 max-h-[140px] overflow-y-auto pr-1">
                   {avalancheList.map((item, idx) => (
-                    <div key={item.id} className="bg-slate-950/50 p-2 rounded-lg border border-slate-850 flex items-center justify-between text-[11px]">
-                      <span className="text-slate-400 font-bold">#{idx + 1} {item.creditor_name}</span>
-                      <span className="text-slate-200 font-semibold">{item.type === 'personal' ? '0%' : `${item.interest_rate}%`}</span>
+                    <div key={item.id} className="bg-white p-2 rounded-lg border border-slate-200 flex items-center justify-between text-[11px]">
+                      <span className="text-slate-500 font-bold">#{idx + 1} {item.creditor_name}</span>
+                      <span className="text-slate-800 font-semibold">{item.type === 'personal' ? '0%' : `${item.interest_rate}%`}</span>
                     </div>
                   ))}
                   {avalancheList.length === 0 && <span className="text-[11px] text-slate-500 italic">Tidak ada hutang aktif</span>}
@@ -409,10 +409,10 @@ export const Risk: React.FC = () => {
               </div>
             </div>
 
-            <div className="p-3 bg-purple-500/10 border border-purple-500/20 rounded-xl flex gap-2">
-              <Sparkles className="text-purple-400 shrink-0 mt-0.5" size={14} />
-              <p className="text-[11px] text-slate-300 leading-relaxed">
-                <strong>Saran Zeth Finance:</strong> Pilih metode <strong className="text-white">Avalanche</strong> kalau kamu mau hemat total pembayaran bunga, atau pilih metode <strong className="text-white">Snowball</strong> kalau kamu butuh dorongan mental dengan melunasi tagihan-tagihan kecil satu per satu secara cepat.
+            <div className="p-3 bg-emerald-50 border border-emerald-200 rounded-xl flex gap-2">
+              <Sparkles className="text-emerald-600 shrink-0 mt-0.5" size={14} />
+              <p className="text-[11px] text-slate-650 leading-relaxed">
+                <strong>Saran Zeth Finance:</strong> Pilih metode <strong className="text-slate-900">Avalanche</strong> kalau kamu mau hemat total pembayaran bunga, atau pilih metode <strong className="text-slate-900">Snowball</strong> kalau kamu butuh dorongan mental dengan melunasi tagihan-tagihan kecil satu per satu secara cepat.
               </p>
             </div>
           </div>
@@ -420,35 +420,35 @@ export const Risk: React.FC = () => {
       </div>
 
       {/* BOTTOM SECTION: GALI LUBANG TUTUP LUBANG SIMULATOR */}
-      <div className="glass-card p-6 md:p-8 rounded-3xl border border-slate-800/80 space-y-6">
+      <div className="glass-card p-6 md:p-8 rounded-3xl border border-slate-200 space-y-6">
         <div>
-          <h2 className="text-xl font-bold text-slate-100 flex items-center gap-2">
-            <Layers className="text-purple-500" />
+          <h2 className="text-xl font-bold text-slate-800 flex items-center gap-2">
+            <Layers className="text-emerald-500" />
             Simulator Gali Lubang Tutup Lubang 🕳️
           </h2>
-          <p className="text-slate-400 text-xs mt-1">
+          <p className="text-slate-500 text-xs mt-1">
             Simulasiin efeknya kalau kamu nekat ngambil pinjaman baru cuma buat nutupin tagihan lama.
           </p>
         </div>
 
-        <hr className="border-slate-800/80" />
+        <hr className="border-slate-200" />
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
           
           {/* Simulator Form Inputs */}
           <div className="space-y-4">
-            <h3 className="text-xs font-bold text-slate-400 uppercase tracking-widest flex items-center gap-1.5">
-              <HelpCircle size={14} className="text-purple-400" />
+            <h3 className="text-xs font-bold text-slate-550 uppercase tracking-widest flex items-center gap-1.5">
+              <HelpCircle size={14} className="text-emerald-650" />
               Skenario Simulasi
             </h3>
 
             {/* Selection Debt A */}
             <div className="space-y-1.5">
-              <label className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Pilih Hutang Lama yang Mau Dilunasi (Hutang A)</label>
+              <label className="text-[10px] font-bold text-slate-500 uppercase tracking-wider">Pilih Hutang Lama yang Mau Dilunasi (Hutang A)</label>
               <select
                 value={selectedDebtAId}
                 onChange={(e) => setSelectedDebtAId(e.target.value)}
-                className="w-full bg-slate-900 border border-slate-800 rounded-xl px-4 py-3 text-slate-200 text-sm focus:outline-none focus:border-purple-500"
+                className="w-full bg-white border border-slate-200 rounded-xl px-4 py-3 text-slate-800 text-sm focus:outline-none focus:border-emerald-500"
               >
                 <option value="">-- Pilih Hutang Kamu Saat Ini --</option>
                 {activeDebts.map(d => (
@@ -460,17 +460,17 @@ export const Risk: React.FC = () => {
             </div>
 
             {debtA && (
-              <div className="bg-slate-950 p-4 rounded-xl border border-slate-850 space-y-4">
-                <p className="text-xs text-slate-400 font-semibold uppercase tracking-wider">Detail Pinjaman Baru (Hutang B)</p>
+              <div className="bg-slate-50 p-4 rounded-xl border border-slate-200 space-y-4">
+                <p className="text-xs text-slate-500 font-semibold uppercase tracking-wider">Detail Pinjaman Baru (Hutang B)</p>
                 
                 {/* Source Loan Name */}
                 <div className="space-y-1">
-                  <label className="text-[9px] font-bold text-slate-500 uppercase">Nama Pinjaman / Kreditur Baru</label>
+                  <label className="text-[9px] font-bold text-slate-550 uppercase">Nama Pinjaman / Kreditur Baru</label>
                   <input
                     type="text"
                     value={sourceLoanName}
                     onChange={(e) => setSourceLoanName(e.target.value)}
-                    className="w-full bg-slate-900 border border-slate-800 rounded-lg px-3 py-2 text-xs text-slate-200"
+                    className="w-full bg-white border border-slate-200 rounded-lg px-3 py-2 text-xs text-slate-800"
                     placeholder="Contoh: Pinjol B, Kartu Kredit X"
                   />
                 </div>
@@ -478,25 +478,25 @@ export const Risk: React.FC = () => {
                 <div className="grid grid-cols-2 gap-4">
                   {/* Source Loan Interest */}
                   <div className="space-y-1">
-                    <label className="text-[9px] font-bold text-slate-500 uppercase">Bunga Pinjaman Baru (% per Bulan)</label>
+                    <label className="text-[9px] font-bold text-slate-550 uppercase">Bunga Pinjaman Baru (% per Bulan)</label>
                     <input
                       type="number"
                       step="0.01"
                       value={sourceLoanInterest}
                       onChange={(e) => setSourceLoanInterest(e.target.value)}
-                      className="w-full bg-slate-900 border border-slate-800 rounded-lg px-3 py-2 text-xs text-slate-200"
+                      className="w-full bg-white border border-slate-200 rounded-lg px-3 py-2 text-xs text-slate-800"
                       placeholder="Contoh: 3.5"
                     />
                   </div>
 
                   {/* Source Loan Tenor */}
                   <div className="space-y-1">
-                    <label className="text-[9px] font-bold text-slate-500 uppercase">Tenor Pinjaman Baru (Bulan)</label>
+                    <label className="text-[9px] font-bold text-slate-550 uppercase">Tenor Pinjaman Baru (Bulan)</label>
                     <input
                       type="number"
                       value={sourceLoanTenor}
                       onChange={(e) => setSourceLoanTenor(e.target.value)}
-                      className="w-full bg-slate-900 border border-slate-800 rounded-lg px-3 py-2 text-xs text-slate-200"
+                      className="w-full bg-white border border-slate-200 rounded-lg px-3 py-2 text-xs text-slate-800"
                       placeholder="Contoh: 12"
                     />
                   </div>
@@ -508,39 +508,39 @@ export const Risk: React.FC = () => {
           {/* Simulator Calculations Visual Outputs */}
           <div className="flex flex-col justify-center">
             {!simulationData ? (
-              <div className="h-full flex flex-col items-center justify-center text-center p-8 bg-slate-900/30 rounded-2xl border border-slate-800/40">
-                <Layers className="text-slate-700 mb-2" size={24} />
+              <div className="h-full flex flex-col items-center justify-center text-center p-8 bg-slate-50 rounded-2xl border border-slate-200">
+                <Layers className="text-slate-400 mb-2" size={24} />
                 <p className="text-xs text-slate-500 font-medium">Lengkapi skenario di sebelah kiri untuk melihat hasil dampak simulasi.</p>
               </div>
             ) : (
               <div className="space-y-6">
-                <h3 className="text-xs font-bold text-slate-400 uppercase tracking-widest">Hasil Analisis Simulasi</h3>
+                <h3 className="text-xs font-bold text-slate-500 uppercase tracking-widest">Hasil Analisis Simulasi</h3>
                 
                 {simulationData.isDangerous ? (
                   /* WARNING TEXT (Owner's requirement: bright red, warning tag) */
-                  <div className="p-4 bg-red-500/10 border border-red-500/30 text-red-500 rounded-2xl space-y-1.5 shadow-[0_0_15px_rgba(239,68,68,0.15)]">
-                    <div className="flex items-center gap-2 text-sm font-extrabold text-red-500">
+                  <div className="p-4 bg-red-50 border border-red-200 text-red-650 rounded-2xl space-y-1.5 shadow-[0_0_15px_rgba(239,68,68,0.05)]">
+                    <div className="flex items-center gap-2 text-sm font-extrabold text-red-650">
                       <AlertTriangle size={18} className="animate-pulse" />
                       <span>🚨 BAHAYA BANGET! (Gali Lubang Tutup Lubang)</span>
                     </div>
-                    <p className="text-xs text-slate-300 font-normal leading-relaxed">
-                      Kamu mencoba bayar hutang lama bermotif bunga (<span className="text-white font-bold">{simulationData.rateA}%</span>) pakai pinjaman baru yang bunganya malah lebih gede (<span className="text-red-500 font-bold">{simulationData.rateB}%</span>). Ini bakal bikin kamu makin tenggelam dalam jebakan bunga!
+                    <p className="text-xs text-slate-600 font-normal leading-relaxed">
+                      Kamu mencoba bayar hutang lama bermotif bunga (<span className="text-slate-800 font-bold">{simulationData.rateA}%</span>) pakai pinjaman baru yang bunganya malah lebih gede (<span className="text-red-600 font-bold">{simulationData.rateB}%</span>). Ini bakal bikin kamu makin tenggelam dalam jebakan bunga!
                     </p>
                   </div>
                 ) : (
-                  <div className="p-4 bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 rounded-2xl space-y-1.5">
+                  <div className="p-4 bg-emerald-50 border border-emerald-250 text-emerald-700 rounded-2xl space-y-1.5">
                     <div className="flex items-center gap-2 text-sm font-bold">
                       <Sparkles size={18} />
                       <span>✅ Boleh Dicoba (Konsolidasi Bunga)</span>
                     </div>
-                    <p className="text-xs text-slate-300 font-normal leading-relaxed">
-                      Pinjaman baru punya bunga (<span className="text-emerald-400 font-bold">{simulationData.rateB}%</span>) yang lebih rendah daripada hutang lama (<span className="text-white font-bold">{simulationData.rateA}%</span>). Cara ini secara hitungan aman buat memangkas total beban bunga kamu.
+                    <p className="text-xs text-slate-650 font-normal leading-relaxed">
+                      Pinjaman baru punya bunga (<span className="text-emerald-600 font-bold">{simulationData.rateB}%</span>) yang lebih rendah daripada hutang lama (<span className="text-slate-800 font-bold">{simulationData.rateA}%</span>). Cara ini secara hitungan aman buat memangkas total beban bunga kamu.
                     </p>
                   </div>
                 )}
 
                 {/* Recharts chart showing cumulative interest projections */}
-                <div className="bg-slate-950 p-4 rounded-2xl border border-slate-900">
+                <div className="bg-white p-4 rounded-2xl border border-slate-200">
                   <span className="text-[10px] font-bold text-slate-500 uppercase tracking-wider block mb-3">Grafik Akumulasi Beban Bunga</span>
                   <div className="w-full h-48">
                     <ResponsiveContainer width="100%" height="100%">
@@ -550,27 +550,27 @@ export const Risk: React.FC = () => {
                       >
                         <defs>
                           <linearGradient id="colorA" x1="0" y1="0" x2="0" y2="1">
-                            <stop offset="5%" stopColor="#8b5cf6" stopOpacity={0.4}/>
-                            <stop offset="95%" stopColor="#8b5cf6" stopOpacity={0}/>
+                            <stop offset="5%" stopColor="#10b981" stopOpacity={0.4}/>
+                            <stop offset="95%" stopColor="#10b981" stopOpacity={0}/>
                           </linearGradient>
                           <linearGradient id="colorB" x1="0" y1="0" x2="0" y2="1">
-                            <stop offset="5%" stopColor={simulationData.isDangerous ? '#ef4444' : '#10b981'} stopOpacity={0.4}/>
-                            <stop offset="95%" stopColor={simulationData.isDangerous ? '#ef4444' : '#10b981'} stopOpacity={0}/>
+                            <stop offset="5%" stopColor={simulationData.isDangerous ? '#ef4444' : '#059669'} stopOpacity={0.4}/>
+                            <stop offset="95%" stopColor={simulationData.isDangerous ? '#ef4444' : '#059669'} stopOpacity={0}/>
                           </linearGradient>
                         </defs>
-                        <CartesianGrid strokeDasharray="3 3" stroke="#1e293b" />
+                        <CartesianGrid strokeDasharray="3 3" stroke="#e2e8f0" />
                         <XAxis dataKey="month" stroke="#64748b" style={{ fontSize: 9 }} />
                         <YAxis stroke="#64748b" style={{ fontSize: 9 }} />
                         <ChartTooltip 
-                          contentStyle={{ backgroundColor: '#090d16', border: '1px solid #1e293b', borderRadius: '12px' }}
-                          labelStyle={{ fontSize: 10, fontWeight: 'bold', color: '#94a3b8' }}
-                          itemStyle={{ fontSize: 11, color: '#f8fafc' }}
+                          contentStyle={{ backgroundColor: '#ffffff', border: '1px solid #e2e8f0', borderRadius: '12px' }}
+                          labelStyle={{ fontSize: 10, fontWeight: 'bold', color: '#64748b' }}
+                          itemStyle={{ fontSize: 11, color: '#334155' }}
                         />
                         <Legend wrapperStyle={{ fontSize: 10, paddingTop: 10 }} />
                         <Area 
                           type="monotone" 
                           dataKey="Hutang A (Berjalan)" 
-                          stroke="#8b5cf6" 
+                          stroke="#10b981" 
                           fillOpacity={1} 
                           fill="url(#colorA)" 
                           strokeWidth={2}
@@ -578,7 +578,7 @@ export const Risk: React.FC = () => {
                         <Area 
                           type="monotone" 
                           dataKey="Hutang B (Simulasi Baru)" 
-                          stroke={simulationData.isDangerous ? '#ef4444' : '#10b981'} 
+                          stroke={simulationData.isDangerous ? '#ef4444' : '#059669'} 
                           fillOpacity={1} 
                           fill="url(#colorB)" 
                           strokeWidth={2}
@@ -589,29 +589,29 @@ export const Risk: React.FC = () => {
                 </div>
 
                 {/* Mathematical visual breakdowns */}
-                <div className="bg-slate-900/60 p-5 rounded-2xl border border-slate-800/85 space-y-3 text-xs">
+                <div className="bg-slate-50 p-5 rounded-2xl border border-slate-200 space-y-3 text-xs">
                   <div className="flex justify-between items-center">
-                    <span className="text-slate-400 font-medium">Jumlah Pengalihan Dana</span>
-                    <span className="text-slate-200 font-bold">{formatRupiah(simulationData.amountToRefinance)}</span>
+                    <span className="text-slate-500 font-medium">Jumlah Pengalihan Dana</span>
+                    <span className="text-slate-800 font-bold">{formatRupiah(simulationData.amountToRefinance)}</span>
                   </div>
                   <div className="flex justify-between items-center">
-                    <span className="text-slate-400 font-medium">Beban Bunga Hutang A (Asal)</span>
-                    <span className="text-slate-200 font-semibold">{formatRupiah(simulationData.interestA)} ({simulationData.remainingMonthsA} bulan)</span>
+                    <span className="text-slate-550 font-medium">Beban Bunga Hutang A (Asal)</span>
+                    <span className="text-slate-800 font-semibold">{formatRupiah(simulationData.interestA)} ({simulationData.remainingMonthsA} bulan)</span>
                   </div>
                   <div className="flex justify-between items-center">
-                    <span className="text-slate-400 font-medium">Beban Bunga Hutang B (Baru)</span>
-                    <span className={`font-semibold ${simulationData.isLoss ? 'text-red-500' : 'text-emerald-400'}`}>
+                    <span className="text-slate-550 font-medium">Beban Bunga Hutang B (Baru)</span>
+                    <span className={`font-semibold ${simulationData.isLoss ? 'text-red-650' : 'text-emerald-700'}`}>
                       {formatRupiah(simulationData.interestB)} ({simulationData.tenorB} bulan)
                     </span>
                   </div>
 
-                  <hr className="border-slate-800" />
+                  <hr className="border-slate-200" />
 
                   <div className="flex justify-between items-center text-sm">
-                    <span className="text-slate-300 font-bold">
+                    <span className="text-slate-650 font-bold">
                       {simulationData.isLoss ? 'Potensi Kerugian Akumulatif' : 'Potensi Penghematan Bunga'}
                     </span>
-                    <span className={`font-extrabold ${simulationData.isLoss ? 'text-red-500 text-base' : 'text-emerald-400 text-base'}`}>
+                    <span className={`font-extrabold ${simulationData.isLoss ? 'text-red-650 text-base' : 'text-emerald-750 text-base'}`}>
                       {formatRupiah(simulationData.netLossOrGain)}
                     </span>
                   </div>
