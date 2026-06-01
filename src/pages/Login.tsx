@@ -127,19 +127,26 @@ export const Login: React.FC = () => {
   const estMonths = monthlyPay > 0 ? Math.ceil(totalDebt / monthlyPay) : 0
 
   return (
-    <div className="min-h-screen bg-slate-50 flex items-center justify-center p-4 relative overflow-hidden font-sans">
+    <div className="min-h-screen bg-white flex items-center justify-center p-4 relative overflow-hidden font-sans">
       {/* Visual background decorations with premium dynamic wave gradients */}
       <div className="absolute top-0 left-0 right-0 h-96 bg-gradient-to-b from-emerald-500/10 to-transparent pointer-events-none"></div>
       <div className="absolute -top-40 -left-40 w-96 h-96 bg-emerald-400/20 rounded-full blur-3xl opacity-60"></div>
       <div className="absolute -bottom-40 -right-40 w-96 h-96 bg-teal-400/20 rounded-full blur-3xl opacity-60"></div>
-      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[350px] bg-gradient-to-tr from-emerald-500/5 to-teal-500/5 rounded-full blur-3xl pointer-events-none"></div>
+      
+      {/* Elegant minimalist Green-White SVG Wave vector line */}
+      <div className="absolute bottom-0 left-0 right-0 pointer-events-none opacity-40 select-none">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 320" className="w-full h-auto">
+          <path fill="#10b981" fillOpacity="0.06" d="M0,192L80,186.7C160,181,320,171,480,181.3C640,192,800,224,960,224C1120,224,1280,192,1360,176L1440,160L1440,320L1360,320C1280,320,1120,320,960,320C800,320,640,320,480,320C320,320,160,320,80,320L0,320Z"></path>
+          <path fill="#059669" fillOpacity="0.04" d="M0,96L80,112C160,128,320,160,480,170.7C640,181,800,171,960,149.3C1120,128,1280,96,1360,80L1440,64L1440,320L1360,320C1280,320,1120,320,960,320C800,320,640,320,480,320C320,320,160,320,80,320L0,320Z"></path>
+        </svg>
+      </div>
 
-      <div className="w-full max-w-lg glass-card p-8 md:p-10 rounded-3xl relative z-10 border border-slate-200/90 shadow-2xl transition-all duration-300">
+      <div className="w-full max-w-lg bg-white/95 backdrop-blur-md p-8 md:p-10 rounded-3xl relative z-10 border border-emerald-500/10 shadow-[0_20px_50px_rgba(16,185,129,0.08)] transition-all duration-300 transform hover:scale-[1.005]">
         
         {/* HERO STEP */}
         {step === 'hero' && (
-          <div className="space-y-6 text-center py-4">
-            <div className="inline-flex p-3.5 rounded-2xl bg-emerald-50 border border-emerald-200 text-emerald-600 mb-2 shadow-sm animate-pulse">
+          <div className="space-y-6 text-center py-4 animate-in fade-in duration-300">
+            <div className="inline-flex p-3.5 rounded-2xl bg-emerald-50 border border-emerald-100 text-emerald-600 mb-2 shadow-sm">
               <ShieldLogo size={36} />
             </div>
             <h1 className="text-3xl md:text-4xl font-extrabold text-slate-900 tracking-tight leading-tight">

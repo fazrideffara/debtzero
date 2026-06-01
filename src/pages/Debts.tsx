@@ -23,6 +23,8 @@ export const Debts: React.FC = () => {
 
   const [filterType, setFilterType] = useState<string>('all')
   const [filterStatus, setFilterStatus] = useState<string>('active')
+  const [searchQuery, setSearchQuery] = useState<string>('')
+  const [sortOption, setSortOption] = useState<string>('due-date')
 
   // Form states
   const [type, setType] = useState<'cicilan' | 'gadai' | 'personal'>('cicilan')
@@ -147,11 +149,28 @@ export const Debts: React.FC = () => {
   }
 
   // Filter debts
-  const filteredDebts = debts.filter((d) => {
-    const matchesType = filterType === 'all' || d.type === filterType
-    const matchesStatus = filterStatus === 'all' || d.status === filterStatus
-    return matchesType && matchesStatus
-  })
+  const filteredDebts = debts
+    .filter((d) => {
+      const matchesType = filterType === 'all' || d.type === filterType
+      const matchesStatus = filterStatus === 'all' || d.status === filterStatus
+      const matchesSearch = d.creditor_name.toLowerCase().includes(searchQuery.toLowerCase()) || 
+        (d.notes && d.notes.toLowerCase().includes(searchQuery.toLowerCase()))
+      return matchesType && matchesStatus && matchesSearch
+    })
+    .sort((a, b) => {
+      if (sortOption === 'due-date') {
+        if (!a.due_date) return 1
+        if (!b.due_date) return -1
+        return new Date(a.due_date).getTime() - new Date(b.due_date).getTime()
+      }
+      if (sortOption === 'interest') {
+        return b.interest_rate - a.interest_rate
+      }
+      if (sortOption === 'nominal') {
+        return b.remaining_amount - a.remaining_amount
+      }
+      return 0
+    })
 
   // Format inline inputs as Rupiah for user feedback
   const displayRupiahFeedback = (val: string) => {
@@ -169,7 +188,7 @@ export const Debts: React.FC = () => {
             <CreditCard className="text-emerald-500" />
             Daftar Hutang
           </h1>
-          <p className="text-slate-500 text-sm">
+          <p className="text-slate-550 text-sm">
             Pantau dan kelola rincian kewajiban cicilan, gadai, dan personal Anda di sini.
           </p>
         </div>
@@ -177,7 +196,7 @@ export const Debts: React.FC = () => {
           <button
             id="btn-scan-debt"
             onClick={() => setIsScanModalOpen(true)}
-            className="flex items-center justify-center gap-2 px-5 py-3 rounded-xl bg-emerald-50 border border-emerald-200 hover:bg-emerald-100 text-emerald-600 font-medium text-sm transition-colors cursor-pointer"
+            className="flex items-center justify-center gap-2 px-5 py-3 rounded-xl bg-emerald-50 border border-emerald-250 hover:bg-emerald-100 text-emerald-600 font-bold text-sm transition-colors cursor-pointer"
           >
             <Sparkles size={16} />
             <span>Scan Tagihan (AI)</span>
@@ -188,7 +207,7 @@ export const Debts: React.FC = () => {
               handleTypeChange('cicilan')
               setIsModalOpen(true)
             }}
-            className="flex items-center justify-center gap-2 px-5 py-3 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-medium text-sm transition-colors shadow-lg shadow-emerald-600/10 cursor-pointer"
+            className="flex items-center justify-center gap-2 px-5 py-3 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-sm transition-colors shadow-lg shadow-emerald-600/10 cursor-pointer"
           >
             <Plus size={16} />
             <span>Tambah Hutang</span>
@@ -206,12 +225,20 @@ export const Debts: React.FC = () => {
       )}
 
       {/* Filters Dashboard */}
-      <div className="glass-panel p-4 rounded-2xl border border-slate-200 flex flex-wrap gap-4 items-center justify-between">
-        <div className="flex flex-wrap gap-3 items-center">
+      <div className="glass-panel p-4 rounded-2xl border border-slate-250/80 flex flex-wrap gap-4 items-center justify-between">
+        <div className="flex flex-wrap gap-3 items-center flex-1 min-w-[280px]">
           <div className="flex items-center gap-1.5 text-xs text-slate-500 font-bold uppercase tracking-wider pl-1">
             <Filter size={14} />
-            <span>Filter:</span>
+            <span>Cari & Filter:</span>
           </div>
+          {/* Search bar */}
+          <input
+            type="text"
+            placeholder="Cari nama kreditur..."
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            className="bg-white border border-slate-200 rounded-lg px-3 py-1.5 text-xs text-slate-700 focus:outline-none focus:border-emerald-500 w-44"
+          />
           {/* Type Filter */}
           <select
             id="filter-type-select"
@@ -235,8 +262,19 @@ export const Debts: React.FC = () => {
             <option value="completed">Lunas (Completed)</option>
             <option value="all">Semua Status</option>
           </select>
+          {/* Sorting Filter */}
+          <select
+            id="filter-sort-select"
+            value={sortOption}
+            onChange={(e) => setSortOption(e.target.value)}
+            className="bg-white border border-slate-200 rounded-lg px-3 py-1.5 text-xs text-slate-700 focus:outline-none focus:border-emerald-500"
+          >
+            <option value="due-date">Jatuh Tempo Terdekat</option>
+            <option value="interest">Bunga Tertinggi</option>
+            <option value="nominal">Sisa Nominal Terbesar</option>
+          </select>
         </div>
-        <div className="text-xs text-slate-500 font-medium">
+        <div className="text-xs text-slate-500 font-bold uppercase tracking-wider">
           Menampilkan {filteredDebts.length} catatan hutang
         </div>
       </div>

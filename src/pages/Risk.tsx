@@ -53,8 +53,10 @@ export const Risk: React.FC = () => {
           .eq('user_id', user.id)
           .single()
 
-        if (data) {
-          setIncome(Number(data.monthly_income) || 0)
+        if (data && Number(data.monthly_income) > 0) {
+          setIncome(Number(data.monthly_income))
+        } else {
+          setIncome(0)
         }
       } catch (err) {
         console.error('Error loading settings:', err)
@@ -81,16 +83,43 @@ export const Risk: React.FC = () => {
       return sum
     }, 0)
 
-    const finalIncome = Math.max(1, income + simulatedIncomeOffset)
+    // Ensure finalIncome is valid (defaults to 1 to avoid dividing by zero if income is 0, but if we have input/offset we calculate correctly)
+    const rawIncome = income + simulatedIncomeOffset
+    const finalIncome = rawIncome <= 0 ? (income > 0 ? income : 1) : rawIncome
     const finalCommitment = Math.max(0, totalMonthlyCommitment + simulatedCommitmentOffset)
     const dsr = calculateDSR(finalCommitment, finalIncome)
+
+    // Calculate Tanggal Merdeka Hutang
+    // Merdeka Month = total remaining debts / sisa dana dingin bulanan (income - expense - commitment)
+    // For calculation, let's assume average expense is 50% of income if not fetched, or we can fetch monthly_expense
+    // Let's calculate based on simulated values: sisa dana dingin = finalIncome - finalCommitment
+    const totalRemainingAmount = activeDebts.reduce((sum, d) => sum + d.remaining_amount, 0)
+    const monthlyAllocatable = Math.max(100000, finalIncome * 0.4 - finalCommitment) // assume 40% income is allocatable to speed up payoff
+    const monthsToFreedom = totalRemainingAmount > 0 ? Math.ceil(totalRemainingAmount / monthlyAllocatable) : 0
+    
+    // Convert months to date offset
+    const freedomDate = new Date()
+    freedomDate.setMonth(freedomDate.getMonth() + monthsToFreedom)
+    const freedomDateText = totalRemainingAmount > 0 
+      ? freedomDate.toLocaleDateString('id-ID', { month: 'long', year: 'numeric' })
+      : 'Bulan Ini'
+
+    // Smart Allocation recommendation text
+    const smallestDebt = [...activeDebts].sort((a, b) => a.remaining_amount - b.remaining_amount)[0]
+    const allocationTip = smallestDebt 
+      ? `Sisa dana dingin kamu bulan ini sebesar ${formatRupiah(monthlyAllocatable)}. Berdasarkan metode Snowball, alokasikan penuh dana ini untuk menggempur ${smallestDebt.creditor_name} agar cepat lunas!`
+      : 'Kamu tidak memiliki hutang aktif. Pertahankan terus kondisi merdeka finansial ini, Bos!'
 
     return {
       baseMonthlyCommitment: totalMonthlyCommitment,
       totalMonthlyCommitment: finalCommitment,
       income: finalIncome,
       dsr,
-      isDsrHigh: dsr > 35
+      isDsrHigh: dsr > 35,
+      monthsToFreedom,
+      freedomDateText,
+      totalRemainingAmount,
+      allocationTip
     }
   }, [activeDebts, income, simulatedIncomeOffset, simulatedCommitmentOffset])
 
@@ -206,11 +235,10 @@ export const Risk: React.FC = () => {
   const circumference = 2 * Math.PI * radius
   const dsrValue = Math.min(totals.dsr, 100)
   const strokeDashoffset = circumference - (dsrValue / 100) * circumference
-  // Clean dynamic coloring: Green if DSR <= 35%, Red if DSR > 35%
-  const gaugeColor = totals.dsr > 35 ? '#ef4444' : '#10b981'
   const glowShadow = totals.dsr > 35 
     ? 'drop-shadow(0 0 8px rgba(239, 68, 68, 0.6))' 
     : 'drop-shadow(0 0 8px rgba(16, 185, 129, 0.6))'
+
 
   return (
     <div className="space-y-8">
@@ -233,6 +261,7 @@ export const Risk: React.FC = () => {
           <div className="w-full">
             <h2 className="text-sm font-bold text-slate-500 uppercase tracking-widest mb-4">Rasio Cicilan (DSR)</h2>
             
+            {/* Circular Gauge and Health Zone badge */}
             <div className="relative w-40 h-40 mx-auto flex items-center justify-center">
               {/* SVG Circular Ring */}
               <svg viewBox="0 0 160 160" className="w-full h-full transform -rotate-90">
@@ -248,7 +277,12 @@ export const Risk: React.FC = () => {
                   cx="80"
                   cy="80"
                   r={radius}
-                  stroke={gaugeColor}
+                  stroke={
+                    totals.dsr < 30 ? '#10b981' : // Hijau (Aman)
+                    totals.dsr < 50 ? '#eab308' : // Kuning (Waspada)
+                    totals.dsr < 70 ? '#f97316' : // Oranye (Bahaya)
+                    '#ef4444' // Merah (Kritis)
+                  }
                   strokeWidth="10"
                   fill="transparent"
                   strokeDasharray={circumference}
@@ -260,62 +294,97 @@ export const Risk: React.FC = () => {
               </svg>
               <div className="absolute flex flex-col items-center justify-center">
                 <span className="text-3xl font-extrabold text-slate-800">{totals.dsr}%</span>
-                <span className={`text-[9px] font-extrabold uppercase px-1.5 py-0.5 rounded-full mt-1 ${
-                  totals.dsr > 35 ? 'bg-red-100 text-red-700' : 'bg-emerald-100 text-emerald-700'
+                <span className={`text-[9px] font-extrabold uppercase px-2 py-0.5 rounded-full mt-1 ${
+                  totals.dsr < 30 ? 'bg-emerald-100 text-emerald-700' :
+                  totals.dsr < 50 ? 'bg-yellow-100 text-yellow-750' :
+                  totals.dsr < 70 ? 'bg-orange-100 text-orange-700' :
+                  'bg-red-100 text-red-700'
                 }`}>
-                  {totals.dsr > 35 ? '🔴 Bahaya (>35%)' : '🟢 Aman (≤35%)'}
+                  {
+                    totals.dsr < 30 ? '🟢 Aman' :
+                    totals.dsr < 50 ? '🟡 Waspada' :
+                    totals.dsr < 70 ? '🟠 Bahaya' :
+                    '🔴 Kritis'
+                  }
                 </span>
               </div>
             </div>
 
-            <div className="mt-5 space-y-1">
-              <p className="text-xs text-slate-650 font-medium">
-                Total Cicilan Bulanan: <strong className="text-slate-800">{formatRupiah(totals.totalMonthlyCommitment)}</strong>
+            <div className="mt-5 space-y-1.5 bg-slate-50 p-3 rounded-2xl border border-slate-200/60 text-left">
+              <p className="text-xs text-slate-650 font-medium flex justify-between">
+                <span>Cicilan Bulanan:</span>
+                <strong className="text-slate-800">{formatRupiah(totals.totalMonthlyCommitment)}</strong>
               </p>
-              <p className="text-[10px] text-slate-500 font-bold uppercase">
-                Gaji Bulanan Kamu: {formatRupiah(totals.income)}
+              <p className="text-xs text-slate-650 font-medium flex justify-between">
+                <span>Gaji Bulanan Kamu:</span>
+                <strong className="text-slate-800">{formatRupiah(totals.income)}</strong>
               </p>
+              <hr className="border-slate-200 my-1" />
+              <div className="text-[11px] text-slate-500 font-bold space-y-0.5">
+                <div className="flex justify-between">
+                  <span>Sisa Sisa Hutang:</span>
+                  <span className="text-slate-700">{formatRupiah(totals.totalRemainingAmount)}</span>
+                </div>
+                <div className="flex justify-between text-emerald-600 font-extrabold">
+                  <span>Merdeka Hutang:</span>
+                  <span>{totals.freedomDateText}</span>
+                </div>
+              </div>
             </div>
           </div>
 
           {/* Interactive controls */}
-          <div className="w-full mt-6 pt-4 border-t border-slate-200 space-y-4 text-left">
-            <span className="text-[10px] font-bold text-slate-500 uppercase tracking-wider block">Coba Simulasikan Keuanganmu</span>
+          <div className="w-full mt-4 pt-4 border-t border-slate-200 space-y-3.5 text-left">
+            <span className="text-[10px] font-bold text-slate-500 uppercase tracking-wider block">Simulasi Penyesuaian</span>
             
-             {/* Income Slider */}
+            {/* Income Slider & Manual Input */}
             <div className="space-y-1">
-              <div className="flex justify-between text-[10px]">
-                <span className="text-slate-500">Simulasi Gaji Bulanan</span>
-                <span className="font-semibold text-slate-800">
-                  {simulatedIncomeOffset >= 0 ? '+' : ''}{formatRupiah(simulatedIncomeOffset)}
-                </span>
+              <div className="flex justify-between items-center text-[10px]">
+                <span className="text-slate-500 font-bold">Simulasi Gaji Bulanan (Rp)</span>
+                <input
+                  type="number"
+                  value={simulatedIncomeOffset}
+                  onChange={(e) => setSimulatedIncomeOffset(Number(e.target.value) || 0)}
+                  className="w-24 bg-white border border-slate-200 rounded px-1.5 py-0.5 text-[10px] text-right font-bold text-slate-700 focus:outline-none focus:border-emerald-500"
+                />
               </div>
               <input
                 type="range"
-                min={-Math.round(income * 0.8)}
-                max={Math.round(income * 2)}
-                step={500000}
+                min={income > 0 ? -Math.round(income * 0.9) : -5000000}
+                max={income > 0 ? Math.round(income * 3) : 25000000}
+                step={250000}
                 value={simulatedIncomeOffset}
                 onChange={(e) => setSimulatedIncomeOffset(Number(e.target.value))}
                 className="w-full accent-emerald-500 h-1 bg-slate-200 rounded-lg cursor-pointer"
               />
             </div>
 
-            {/* Installment Slider */}
+            {/* Installment Slider & Manual Input */}
             <div className="space-y-1">
-              <div className="flex justify-between text-[10px]">
-                <span className="text-slate-500">Simulasi Nambah Cicilan Baru</span>
-                <span className="font-semibold text-slate-800">+{formatRupiah(simulatedCommitmentOffset)}</span>
+              <div className="flex justify-between items-center text-[10px]">
+                <span className="text-slate-500 font-bold">Simulasi Nambah Cicilan (Rp)</span>
+                <input
+                  type="number"
+                  value={simulatedCommitmentOffset}
+                  onChange={(e) => setSimulatedCommitmentOffset(Number(e.target.value) || 0)}
+                  className="w-24 bg-white border border-slate-200 rounded px-1.5 py-0.5 text-[10px] text-right font-bold text-slate-700 focus:outline-none focus:border-emerald-500"
+                />
               </div>
               <input
                 type="range"
                 min={0}
-                max={15000000}
+                max={25000000}
                 step={250000}
                 value={simulatedCommitmentOffset}
                 onChange={(e) => setSimulatedCommitmentOffset(Number(e.target.value))}
                 className="w-full accent-emerald-500 h-1 bg-slate-200 rounded-lg cursor-pointer"
               />
+            </div>
+
+            {/* Smart Allocation recommendation banner */}
+            <div className="p-2.5 bg-emerald-50/60 border border-emerald-500/20 rounded-xl text-[10px] text-slate-650 leading-relaxed">
+              <span className="font-bold text-emerald-700 block mb-0.5">💡 Smart Allocation Tracker:</span>
+              {totals.allocationTip}
             </div>
 
             {(simulatedIncomeOffset !== 0 || simulatedCommitmentOffset !== 0) && (
@@ -324,7 +393,7 @@ export const Risk: React.FC = () => {
                   setSimulatedIncomeOffset(0)
                   setSimulatedCommitmentOffset(0)
                 }}
-                className="w-full py-1.5 bg-slate-100 border border-slate-200 hover:border-slate-350 text-[10px] text-slate-700 rounded-lg flex items-center justify-center gap-1.5 cursor-pointer transition-colors"
+                className="w-full py-1.5 bg-slate-100 border border-slate-200 hover:border-slate-300 text-[10px] text-slate-700 rounded-lg flex items-center justify-center gap-1.5 cursor-pointer transition-colors"
               >
                 <RefreshCw size={10} />
                 Kembalikan ke Awal (Reset)

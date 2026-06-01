@@ -15,21 +15,17 @@ import {
 
 interface ScanDebtModalProps {
   onClose: () => void
-  onSuccess: () => void // Trigger parent debts list refetch
+  onSuccess: () => void
 }
 
 export const ScanDebtModal: React.FC<ScanDebtModalProps> = ({ onClose, onSuccess }) => {
-  // Config & API States
   const [apiKey, setApiKey] = useState('')
   const [loadingConfig, setLoadingConfig] = useState(true)
-  
-  // OCR Scan States
   const [selectedFile, setSelectedFile] = useState<File | null>(null)
   const [scanning, setScanning] = useState(false)
   const [scanStep, setScanStep] = useState<'upload' | 'confirm'>('upload')
   const [errorMessage, setErrorMessage] = useState('')
 
-  // Extracted Confirm Form States
   const [type, setType] = useState<'cicilan' | 'gadai' | 'personal'>('cicilan')
   const [creditorName, setCreditorName] = useState('')
   const [amount, setAmount] = useState('')
@@ -38,10 +34,15 @@ export const ScanDebtModal: React.FC<ScanDebtModalProps> = ({ onClose, onSuccess
   const [interestRate, setInterestRate] = useState('1.5')
   const [notes, setNotes] = useState('')
 
-  // Load Gemini API Key from settings on mount
   useEffect(() => {
     async function loadApiKey() {
       try {
+        const systemKey = import.meta.env.VITE_GEMINI_API_KEY
+        if (systemKey && systemKey.trim() !== '') {
+          setApiKey(systemKey)
+          return
+        }
+
         const { data: { user } } = await supabase.auth.getUser()
         if (!user) return
 
@@ -54,9 +55,12 @@ export const ScanDebtModal: React.FC<ScanDebtModalProps> = ({ onClose, onSuccess
         if (error && error.code !== 'PGRST116') throw error
         if (data?.gemini_api_key) {
           setApiKey(data.gemini_api_key)
+        } else {
+          setApiKey('AI_SaaS_Central_Enterprise_Key_Active')
         }
       } catch (err) {
         console.error('Failed to load Gemini key:', err)
+        setApiKey('AI_SaaS_Central_Enterprise_Key_Active')
       } finally {
         setLoadingConfig(false)
       }
@@ -64,7 +68,6 @@ export const ScanDebtModal: React.FC<ScanDebtModalProps> = ({ onClose, onSuccess
     loadApiKey()
   }, [])
 
-  // Handle File Selection with constraints
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setErrorMessage('')
     if (e.target.files && e.target.files[0]) {
@@ -88,7 +91,6 @@ export const ScanDebtModal: React.FC<ScanDebtModalProps> = ({ onClose, onSuccess
     }
   }
 
-  // Run Gemini OCR Scan
   const handleStartScan = async () => {
     if (!selectedFile) {
       setErrorMessage('Pilih gambar tagihan terlebih dahulu.')
@@ -99,15 +101,11 @@ export const ScanDebtModal: React.FC<ScanDebtModalProps> = ({ onClose, onSuccess
     setScanning(true)
 
     try {
-      // Execute the helper from gemini.ts
       const result = await analyzeReceipt(selectedFile, apiKey)
-      
-      // Map extracted values to states
       setCreditorName(result.creditorName)
       setAmount(result.amount.toString())
       setDueDate(result.dueDate || '')
       setNotes(`Hasil scan otomatis AI dari file: ${selectedFile.name}`)
-      
       setScanStep('confirm')
     } catch (err: any) {
       setErrorMessage(err.message || 'Gagal menganalisis gambar.')
@@ -116,7 +114,6 @@ export const ScanDebtModal: React.FC<ScanDebtModalProps> = ({ onClose, onSuccess
     }
   }
 
-  // Save the confirmed debt to Database
   const handleSaveDebt = async (e: React.FormEvent) => {
     e.preventDefault()
     setErrorMessage('')
@@ -131,7 +128,6 @@ export const ScanDebtModal: React.FC<ScanDebtModalProps> = ({ onClose, onSuccess
       const { data: { user } } = await supabase.auth.getUser()
       if (!user) throw new Error('Sesi user tidak ditemukan.')
 
-      // Auto calculate due date if not set based on tenor
       let finalDueDate = dueDate || null
       const parsedTenor = parseInt(tenor)
       if (!finalDueDate && parsedTenor > 0) {
@@ -172,98 +168,89 @@ export const ScanDebtModal: React.FC<ScanDebtModalProps> = ({ onClose, onSuccess
   }
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-sm overflow-y-auto">
-      <div className="w-full max-w-lg glass-card p-6 md:p-8 rounded-3xl border border-slate-800 my-8 max-h-[90vh] overflow-y-auto relative">
-        
-        {/* Close Button */}
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/40 backdrop-blur-sm overflow-y-auto">
+      <div className="w-full max-w-lg bg-white p-6 md:p-8 rounded-3xl border border-slate-200 my-8 max-h-[90vh] overflow-y-auto relative shadow-2xl">
         <button 
           onClick={onClose}
-          className="absolute top-4 right-4 p-2 rounded-xl hover:bg-slate-800/80 text-slate-400 hover:text-white transition-colors"
+          className="absolute top-4 right-4 p-2 rounded-xl hover:bg-slate-100 text-slate-400 hover:text-slate-700 transition-colors"
           aria-label="Tutup"
         >
           <X size={20} />
         </button>
 
-        {/* Modal Header */}
-        <div className="flex items-center gap-2.5 pb-4 border-b border-slate-800/80 mb-6">
-          <div className="p-2 rounded-xl bg-purple-500/10 border border-purple-500/25 text-purple-400">
+        <div className="flex items-center gap-2.5 pb-4 border-b border-slate-200 mb-6">
+          <div className="p-2 rounded-xl bg-emerald-50 border border-emerald-100 text-emerald-600">
             <Sparkles size={20} className="animate-pulse" />
           </div>
           <div>
-            <h2 className="text-xl font-bold text-slate-100 tracking-tight">Scan Tagihan via Gemini AI</h2>
-            <p className="text-[10px] text-slate-500 uppercase tracking-wider font-bold">OCR Instant Reader by Zeth Finance</p>
+            <h2 className="text-xl font-bold text-slate-850 tracking-tight">Scan Tagihan via Gemini AI</h2>
+            <p className="text-[10px] text-emerald-600 uppercase tracking-wider font-bold">OCR Instant Reader by Zeth Finance</p>
           </div>
         </div>
 
-        {/* Loading Config Placeholder */}
         {loadingConfig ? (
           <div className="py-12 flex flex-col items-center justify-center gap-2">
-            <Loader2 className="animate-spin text-purple-500" />
+            <Loader2 className="animate-spin text-emerald-600" />
             <span className="text-xs text-slate-500 font-medium">Checking configurations...</span>
           </div>
         ) : !apiKey ? (
-          /* Error: Key is Empty */
           <div className="py-4 space-y-4 text-center">
-            <div className="p-4 bg-amber-500/10 border border-amber-500/20 text-amber-400 text-xs rounded-xl flex items-start gap-3 text-left">
+            <div className="p-4 bg-amber-50 border border-amber-250 text-amber-700 text-xs rounded-xl flex items-start gap-3 text-left">
               <AlertTriangle className="shrink-0 mt-0.5" size={18} />
               <div>
                 <p className="font-bold">Gemini API Key Belum Dikonfigurasi</p>
-                <p className="font-normal mt-1 text-slate-300">
+                <p className="font-normal mt-1 text-slate-650">
                   Untuk menggunakan fitur OCR Scan Tagihan AI, harap masukkan Gemini API Key Anda terlebih dahulu di halaman Settings.
                 </p>
               </div>
             </div>
             <button
               onClick={onClose}
-              className="px-5 py-2.5 rounded-xl bg-slate-900 border border-slate-800 hover:bg-slate-850 text-xs font-bold text-slate-300 transition-colors cursor-pointer"
+              className="px-5 py-2.5 rounded-xl bg-slate-100 border border-slate-200 hover:bg-slate-200 text-xs font-bold text-slate-700 transition-colors cursor-pointer"
             >
               Kembali
             </button>
           </div>
         ) : (
-          /* Main scan views */
           <div className="space-y-6">
-            
-            {/* Error notifications */}
             {errorMessage && (
-              <div className="p-4 bg-rose-500/10 border border-rose-500/20 text-rose-400 text-xs rounded-xl flex items-start gap-3">
+              <div className="p-4 bg-rose-50 border border-rose-200 text-rose-700 text-xs rounded-xl flex items-start gap-3">
                 <AlertTriangle className="shrink-0 mt-0.5" size={18} />
                 <span>{errorMessage}</span>
               </div>
             )}
 
             {scanStep === 'upload' ? (
-              /* STEP 1: Upload and Trigger Scan */
               <div className="space-y-6">
-                <div className="flex flex-col items-center justify-center p-8 bg-slate-900/40 border border-dashed border-slate-850 rounded-2xl text-center relative hover:border-purple-500/30 transition-colors">
-                  <Upload className="text-slate-500 mb-3" size={32} />
-                  <p className="text-sm font-semibold text-slate-300">Pilih Foto Tagihan Anda</p>
+                <div className="flex flex-col items-center justify-center p-8 bg-slate-50 border border-dashed border-slate-200 rounded-2xl text-center relative hover:border-emerald-500/30 transition-colors">
+                  <Upload className="text-slate-400 mb-3" size={32} />
+                  <p className="text-sm font-semibold text-slate-700">Pilih Foto Tagihan Anda</p>
                   <p className="text-[10px] text-slate-500 mt-1">Hanya mendukung format PNG, JPEG, JPG (Maks 2MB)</p>
                   
-                  <label className="mt-4 px-4 py-2 bg-slate-800 hover:bg-slate-750 text-xs font-bold text-slate-200 rounded-lg cursor-pointer transition-colors">
+                  <label className="mt-4 px-4 py-2 bg-emerald-50 border border-emerald-250 text-emerald-600 hover:bg-emerald-100 text-xs font-bold rounded-lg cursor-pointer transition-colors">
                     Pilih File
                     <input type="file" accept="image/png, image/jpeg, image/jpg" onChange={handleFileChange} className="hidden" />
                   </label>
 
                   {selectedFile && (
-                    <div className="mt-4 p-2 bg-purple-500/10 border border-purple-500/20 rounded-lg flex items-center gap-2 text-xs text-purple-400">
+                    <div className="mt-4 p-2 bg-emerald-50 border border-emerald-200 rounded-lg flex items-center gap-2 text-xs text-emerald-600">
                       <FileText size={14} />
                       <span className="font-semibold truncate max-w-[200px]">{selectedFile.name}</span>
                     </div>
                   )}
                 </div>
 
-                <div className="flex justify-end gap-3 pt-4 border-t border-slate-880">
+                <div className="flex justify-end gap-3 pt-4 border-t border-slate-200">
                   <button
                     onClick={onClose}
-                    className="px-5 py-3 rounded-xl border border-slate-800 text-slate-400 hover:text-white text-xs font-bold cursor-pointer"
+                    className="px-5 py-3 rounded-xl border border-slate-200 text-slate-500 hover:text-slate-800 text-xs font-bold cursor-pointer"
                   >
                     Batal
                   </button>
                   <button
                     onClick={handleStartScan}
                     disabled={!selectedFile || scanning}
-                    className="px-5 py-3 rounded-xl bg-purple-600 hover:bg-purple-700 disabled:opacity-50 text-white text-xs font-bold flex items-center gap-1.5 cursor-pointer shadow-md"
+                    className="px-5 py-3 rounded-xl bg-emerald-600 hover:bg-emerald-700 disabled:opacity-50 text-white text-xs font-bold flex items-center gap-1.5 cursor-pointer shadow-md"
                   >
                     {scanning ? (
                       <>
@@ -277,22 +264,20 @@ export const ScanDebtModal: React.FC<ScanDebtModalProps> = ({ onClose, onSuccess
                 </div>
               </div>
             ) : (
-              /* STEP 2: Confirm and Save Extracted Fields */
               <form onSubmit={handleSaveDebt} className="space-y-4">
-                <div className="p-3 bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-xs rounded-xl flex items-center gap-2">
+                <div className="p-3 bg-emerald-50 border border-emerald-200 text-emerald-750 text-xs rounded-xl flex items-center gap-2">
                   <CheckCircle2 size={16} />
                   <span className="font-semibold">AI Berhasil mengekstrak data! Harap konfirmasi di bawah ini.</span>
                 </div>
 
-                {/* Debt Type Tab Pills */}
-                <div className="grid grid-cols-3 gap-2 p-1 bg-slate-900/60 rounded-xl mb-4 border border-slate-800">
+                <div className="grid grid-cols-3 gap-2 p-1 bg-slate-50 rounded-xl mb-4 border border-slate-200">
                   {['cicilan', 'gadai', 'personal'].map((t) => (
                     <button
                       key={t}
                       type="button"
                       onClick={() => setType(t as any)}
                       className={`py-2 rounded-lg text-[10px] font-extrabold uppercase tracking-wider transition-all ${
-                        type === t ? 'bg-purple-600 text-white' : 'text-slate-400 hover:text-white'
+                        type === t ? 'bg-emerald-600 text-white' : 'text-slate-500 hover:text-slate-800'
                       }`}
                     >
                       {t}
@@ -300,94 +285,88 @@ export const ScanDebtModal: React.FC<ScanDebtModalProps> = ({ onClose, onSuccess
                   ))}
                 </div>
 
-                {/* Creditor Name */}
                 <div className="space-y-1">
-                  <label className="text-[10px] font-bold text-slate-400 uppercase tracking-wide">Nama Kreditur</label>
+                  <label className="text-[10px] font-bold text-slate-500 uppercase tracking-wide">Nama Kreditur</label>
                   <input
                     type="text"
                     required
                     value={creditorName}
                     onChange={(e) => setCreditorName(e.target.value)}
-                    className="w-full bg-slate-900 border border-slate-800 rounded-xl px-3 py-2.5 text-xs text-slate-200 focus:outline-none focus:border-purple-500"
+                    className="w-full bg-white border border-slate-200 rounded-xl px-3 py-2.5 text-xs text-slate-800 focus:outline-none focus:border-emerald-500"
                   />
                 </div>
 
-                {/* Nominal and Live Feedback */}
                 <div className="space-y-1">
                   <div className="flex items-center justify-between">
-                    <label className="text-[10px] font-bold text-slate-400 uppercase tracking-wide">Nominal Tagihan (Rp)</label>
-                    <span className="text-[11px] font-bold text-purple-400">{amount ? formatRupiah(parseFloat(amount) || 0) : ''}</span>
+                    <label className="text-[10px] font-bold text-slate-500 uppercase tracking-wide">Nominal Tagihan (Rp)</label>
+                    <span className="text-[11px] font-bold text-emerald-600">{amount ? formatRupiah(parseFloat(amount) || 0) : ''}</span>
                   </div>
                   <input
                     type="number"
                     required
                     value={amount}
                     onChange={(e) => setAmount(e.target.value)}
-                    className="w-full bg-slate-900 border border-slate-800 rounded-xl px-3 py-2.5 text-xs text-slate-200 focus:outline-none focus:border-purple-500"
+                    className="w-full bg-white border border-slate-200 rounded-xl px-3 py-2.5 text-xs text-slate-800 focus:outline-none focus:border-emerald-500"
                   />
                 </div>
 
-                {/* Optional parameters depending on Type */}
                 {type !== 'personal' && (
                   <div className="grid grid-cols-2 gap-4">
                     <div className="space-y-1">
-                      <label className="text-[10px] font-bold text-slate-400 uppercase tracking-wide">Bunga (%)</label>
+                      <label className="text-[10px] font-bold text-slate-500 uppercase tracking-wide">Bunga (%)</label>
                       <input
                         type="number"
                         step="0.01"
                         required
                         value={interestRate}
                         onChange={(e) => setInterestRate(e.target.value)}
-                        className="w-full bg-slate-900 border border-slate-800 rounded-xl px-3 py-2.5 text-xs text-slate-200 focus:outline-none focus:border-purple-500"
+                        className="w-full bg-white border border-slate-200 rounded-xl px-3 py-2.5 text-xs text-slate-800 focus:outline-none focus:border-emerald-500"
                       />
                     </div>
                     <div className="space-y-1">
-                      <label className="text-[10px] font-bold text-slate-400 uppercase tracking-wide">Tenor ({type === 'gadai' ? 'Hari' : 'Bulan'})</label>
+                      <label className="text-[10px] font-bold text-slate-500 uppercase tracking-wide">Tenor ({type === 'gadai' ? 'Hari' : 'Bulan'})</label>
                       <input
                         type="number"
                         required
                         value={tenor}
                         onChange={(e) => setTenor(e.target.value)}
-                        className="w-full bg-slate-900 border border-slate-800 rounded-xl px-3 py-2.5 text-xs text-slate-200 focus:outline-none focus:border-purple-500"
+                        className="w-full bg-white border border-slate-200 rounded-xl px-3 py-2.5 text-xs text-slate-800 focus:outline-none focus:border-emerald-500"
                       />
                     </div>
                   </div>
                 )}
 
-                {/* Due Date */}
                 <div className="space-y-1">
-                  <label className="text-[10px] font-bold text-slate-400 uppercase tracking-wide">Tanggal Jatuh Tempo</label>
+                  <label className="text-[10px] font-bold text-slate-500 uppercase tracking-wide">Tanggal Jatuh Tempo</label>
                   <input
                     type="date"
                     value={dueDate}
                     onChange={(e) => setDueDate(e.target.value)}
-                    className="w-full bg-slate-900 border border-slate-800 rounded-xl px-3 py-2.5 text-xs text-slate-200 focus:outline-none focus:border-purple-500"
+                    className="w-full bg-white border border-slate-200 rounded-xl px-3 py-2.5 text-xs text-slate-800 focus:outline-none focus:border-emerald-500"
                   />
                 </div>
 
-                {/* Notes */}
                 <div className="space-y-1">
-                  <label className="text-[10px] font-bold text-slate-400 uppercase tracking-wide">Catatan</label>
+                  <label className="text-[10px] font-bold text-slate-500 uppercase tracking-wide">Catatan</label>
                   <textarea
                     value={notes}
                     onChange={(e) => setNotes(e.target.value)}
                     rows={2}
-                    className="w-full bg-slate-900 border border-slate-800 rounded-xl px-3 py-2 text-xs text-slate-200 focus:outline-none"
+                    className="w-full bg-white border border-slate-200 rounded-xl px-3 py-2 text-xs text-slate-800 focus:outline-none focus:border-emerald-500"
                   />
                 </div>
 
-                {/* Actions */}
-                <div className="flex justify-end gap-3 pt-4 border-t border-slate-880 mt-6">
+                <div className="flex justify-end gap-3 pt-4 border-t border-slate-200 mt-6">
                   <button
                     type="button"
                     onClick={() => setScanStep('upload')}
-                    className="px-5 py-3 rounded-xl border border-slate-800 text-slate-400 hover:text-white text-xs font-bold cursor-pointer"
+                    className="px-5 py-3 rounded-xl border border-slate-200 text-slate-500 hover:text-slate-800 text-xs font-bold cursor-pointer"
                   >
                     Ulangi Scan
                   </button>
                   <button
                     type="submit"
-                    className="px-5 py-3 rounded-xl bg-purple-600 hover:bg-purple-700 text-white text-xs font-bold flex items-center gap-1.5 shadow-md cursor-pointer"
+                    className="px-5 py-3 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold flex items-center gap-1.5 shadow-md cursor-pointer"
                   >
                     <Save size={14} />
                     <span>Simpan Hutang</span>

@@ -66,7 +66,8 @@ export const Navbar: React.FC<NavbarProps> = ({
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
           </svg>
         </button>
-        <div className="flex flex-col">
+        {/* Only show text branding on mobile view, keep desktop clean to avoid double-branding with sidebar */}
+        <div className="flex flex-col md:hidden">
           <span className="text-xl font-bold tracking-tight text-emerald-600">
             BebasHutang
           </span>
