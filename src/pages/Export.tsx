@@ -51,6 +51,20 @@ export const Export: React.FC = () => {
     setFeedbackMessage(null)
 
     try {
+      // Helper function to auto-fit column widths
+      const autofitColumns = (ws: XLSX.WorkSheet) => {
+        const objectMaxLength: number[] = [];
+        const rows = XLSX.utils.sheet_to_json<any>(ws, { header: 1 });
+        rows.forEach((row: any) => {
+          row.forEach((val: any, colIdx: number) => {
+            const valStr = val ? String(val) : '';
+            const cellLength = valStr.length;
+            objectMaxLength[colIdx] = Math.max(objectMaxLength[colIdx] || 10, cellLength + 2);
+          });
+        });
+        ws['!cols'] = objectMaxLength.map(width => ({ width }));
+      };
+
       // Sheet 1: Summary Info
       const totalOutstanding = debts.reduce((sum, d) => sum + d.remaining_amount, 0)
       const activeDebtsCount = debts.filter(d => d.status === 'active').length
@@ -64,6 +78,7 @@ export const Export: React.FC = () => {
         { 'Detail Laporan': 'Jumlah Hutang Lunas', 'Nilai': completedDebtsCount },
       ]
       const summarySheet = XLSX.utils.json_to_sheet(summaryData)
+      autofitColumns(summarySheet)
 
       // Sheet 2: Active Debts list
       const activeDebtsData = debts.filter(d => d.status === 'active').map((d, index) => ({
@@ -78,6 +93,7 @@ export const Export: React.FC = () => {
         'Catatan': d.notes || '-'
       }))
       const activeDebtsSheet = XLSX.utils.json_to_sheet(activeDebtsData)
+      autofitColumns(activeDebtsSheet)
 
       // Sheet 3: Payments Log
       const paymentsData = payments.map((p, index) => {
@@ -91,6 +107,7 @@ export const Export: React.FC = () => {
         }
       })
       const paymentsSheet = XLSX.utils.json_to_sheet(paymentsData)
+      autofitColumns(paymentsSheet)
 
       // Assemble workbook
       const workbook = XLSX.utils.book_new()
@@ -140,11 +157,12 @@ export const Export: React.FC = () => {
       doc.setFont('Helvetica', 'bold')
       doc.text(`Total Akumulasi Sisa Hutang: ${formatRupiah(totalDebt)}`, 14, 45)
 
-      // Table header setup
+      // Table header setup - Clean light mode, print-friendly
       doc.setFontSize(9)
-      doc.setFillColor(15, 23, 42) // dark background
+      doc.setFillColor(241, 245, 249) // light gray background for print
       doc.rect(14, 52, 182, 8, 'F')
-      doc.setTextColor(255, 255, 255)
+      doc.setTextColor(51, 65, 85)
+      doc.setFont('Helvetica', 'bold')
       doc.text('No', 17, 57)
       doc.text('Kreditur / Pemberi Hutang', 25, 57)
       doc.text('Tipe', 85, 57)

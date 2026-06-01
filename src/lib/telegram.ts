@@ -1,5 +1,5 @@
 import { supabase } from './supabase'
-import { daysRemaining, formatRupiah, formatDateIndo } from '../utils/formatter'
+import { daysRemaining, formatRupiah } from '../utils/formatter'
 
 /**
  * Sends a text message to a Telegram chat using Telegram Bot API.
@@ -84,17 +84,14 @@ export const checkAndTriggerReminders = async (debts: any[], userId: string): Pr
       // 4. Construct friendly Indonesian warning message
       let statusTimeText = ''
       if (type === 'overdue') {
-        statusTimeText = `🚨 LEWAT JATUH TEMPO ${Math.abs(daysLeft)} HARI`
+        statusTimeText = `lewat jatuh tempo <b>${Math.abs(daysLeft)} hari</b> nih!`
       } else {
-        statusTimeText = `⏰ ${daysLeft} hari lagi`
+        statusTimeText = `sisa <b>${daysLeft} hari lagi</b> jatuh tempo.`
       }
 
-      const message = `🔔 <b>DebtZero Reminder Jatuh Tempo</b>\n\n` +
-        `Halo! Ini reminder privat untuk tagihanmu:\n` +
-        `• Hutang ke: <b>${debt.creditor_name}</b>\n` +
-        `• Sisa Tagihan: <b>${formatRupiah(debt.remaining_amount)}</b>\n` +
-        `• Tanggal Jatuh Tempo: <b>${formatDateIndo(debt.due_date)}</b> (${statusTimeText})\n\n` +
-        `Yuk, segera bayar cicilannya biar tidur lebih tenang dan beban pikiran berkurang! 💪`
+      const message = `🚨 <b>Halo Bos! Token reminder nih!</b>\n\n` +
+        `Hutang kamu di <b>${debt.creditor_name}</b> sebesar <b>${formatRupiah(debt.remaining_amount)}</b> ${statusTimeText}\n\n` +
+        `Jangan sampai kelewat ya! Yuk segera dibayar biar tidur lebih nyenyak dan beban berkurang! 💪`
 
       // 5. Send message and write to log on success
       const success = await sendTelegramMessage(telegram_bot_token, telegram_chat_id, message)
