@@ -169,7 +169,7 @@ export const ScanDebtModal: React.FC<ScanDebtModalProps> = ({ onClose, onSuccess
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/40 backdrop-blur-sm overflow-y-auto">
-      <div className="w-full max-w-lg bg-white p-6 md:p-8 rounded-3xl border border-slate-200 my-8 max-h-[90vh] overflow-y-auto relative shadow-2xl">
+      <div className="w-full max-w-lg bg-white/95 backdrop-blur-md p-6 md:p-8 rounded-3xl border border-emerald-500/10 my-8 max-h-[90vh] overflow-y-auto relative shadow-[0_20px_50px_rgba(16,185,129,0.15)]">
         <button 
           onClick={onClose}
           className="absolute top-4 right-4 p-2 rounded-xl hover:bg-slate-100 text-slate-400 hover:text-slate-700 transition-colors"
@@ -195,11 +195,11 @@ export const ScanDebtModal: React.FC<ScanDebtModalProps> = ({ onClose, onSuccess
           </div>
         ) : !apiKey ? (
           <div className="py-4 space-y-4 text-center">
-            <div className="p-4 bg-amber-50 border border-amber-250 text-amber-700 text-xs rounded-xl flex items-start gap-3 text-left">
-              <AlertTriangle className="shrink-0 mt-0.5" size={18} />
+            <div className="p-4 bg-emerald-50/80 border border-emerald-200 text-emerald-800 text-xs rounded-2xl flex items-start gap-3 text-left shadow-sm">
+              <AlertTriangle className="shrink-0 mt-0.5 text-emerald-600" size={18} />
               <div>
                 <p className="font-bold">Gemini API Key Belum Dikonfigurasi</p>
-                <p className="font-normal mt-1 text-slate-650">
+                <p className="font-normal mt-1 text-slate-600">
                   Untuk menggunakan fitur OCR Scan Tagihan AI, harap masukkan Gemini API Key Anda terlebih dahulu di halaman Settings.
                 </p>
               </div>

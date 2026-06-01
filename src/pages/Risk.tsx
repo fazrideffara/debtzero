@@ -31,8 +31,9 @@ export const Risk: React.FC = () => {
   const [selectedStrategy, setSelectedStrategy] = useState<'snowball' | 'avalanche'>('snowball')
 
   // Interactive DSR Simulator state
-  const [simulatedIncomeOffset, setSimulatedIncomeOffset] = useState<number>(0)
+  const [simulatedIncome, setSimulatedIncome] = useState<number>(0)
   const [simulatedCommitmentOffset, setSimulatedCommitmentOffset] = useState<number>(0)
+  const [showEmergencyModal, setShowEmergencyModal] = useState(false)
 
   // Simulator States for Gali Lubang Tutup Lubang
   const [selectedDebtAId, setSelectedDebtAId] = useState('')
@@ -55,8 +56,10 @@ export const Risk: React.FC = () => {
 
         if (data && Number(data.monthly_income) > 0) {
           setIncome(Number(data.monthly_income))
+          setSimulatedIncome(Number(data.monthly_income))
         } else {
           setIncome(0)
+          setSimulatedIncome(0)
         }
       } catch (err) {
         console.error('Error loading settings:', err)
@@ -84,8 +87,7 @@ export const Risk: React.FC = () => {
     }, 0)
 
     // Ensure finalIncome is valid (defaults to 1 to avoid dividing by zero if income is 0, but if we have input/offset we calculate correctly)
-    const rawIncome = income + simulatedIncomeOffset
-    const finalIncome = rawIncome <= 0 ? (income > 0 ? income : 1) : rawIncome
+    const finalIncome = simulatedIncome <= 0 ? 0 : simulatedIncome
     const finalCommitment = Math.max(0, totalMonthlyCommitment + simulatedCommitmentOffset)
     const dsr = calculateDSR(finalCommitment, finalIncome)
 
@@ -121,7 +123,7 @@ export const Risk: React.FC = () => {
       totalRemainingAmount,
       allocationTip
     }
-  }, [activeDebts, income, simulatedIncomeOffset, simulatedCommitmentOffset])
+  }, [activeDebts, income, simulatedIncome, simulatedCommitmentOffset])
 
   // 2. Payoff Strategy Lists (Both generated for side-by-side comparison)
   const snowballList = useMemo(() => {
@@ -331,6 +333,14 @@ export const Risk: React.FC = () => {
                 </div>
               </div>
             </div>
+            {totals.dsr > 70 && (
+              <button
+                onClick={() => setShowEmergencyModal(true)}
+                className="w-full mt-3 py-3 bg-red-600 hover:bg-red-750 text-white font-extrabold rounded-2xl text-xs flex items-center justify-center gap-1.5 transition-all duration-200 cursor-pointer shadow-lg shadow-red-500/20 animate-pulse hover:animate-none"
+              >
+                <span>🚨 Ambil Tindakan Darurat</span>
+              </button>
+            )}
           </div>
 
           {/* Interactive controls */}
@@ -343,18 +353,27 @@ export const Risk: React.FC = () => {
                 <span className="text-slate-500 font-bold">Simulasi Gaji Bulanan (Rp)</span>
                 <input
                   type="number"
-                  value={simulatedIncomeOffset}
-                  onChange={(e) => setSimulatedIncomeOffset(Number(e.target.value) || 0)}
+                  min={0}
+                  value={simulatedIncome}
+                  onChange={(e) => {
+                    const val = Number(e.target.value) || 0
+                    setSimulatedIncome(Math.max(0, val))
+                  }}
+                  onKeyDown={(e) => {
+                    if (e.key === '-' || e.key === 'e') {
+                      e.preventDefault()
+                    }
+                  }}
                   className="w-24 bg-white border border-slate-200 rounded px-1.5 py-0.5 text-[10px] text-right font-bold text-slate-700 focus:outline-none focus:border-emerald-500"
                 />
               </div>
               <input
                 type="range"
-                min={income > 0 ? -Math.round(income * 0.9) : -5000000}
+                min={0}
                 max={income > 0 ? Math.round(income * 3) : 25000000}
                 step={250000}
-                value={simulatedIncomeOffset}
-                onChange={(e) => setSimulatedIncomeOffset(Number(e.target.value))}
+                value={simulatedIncome}
+                onChange={(e) => setSimulatedIncome(Math.max(0, Number(e.target.value)))}
                 className="w-full accent-emerald-500 h-1 bg-slate-200 rounded-lg cursor-pointer"
               />
             </div>
@@ -365,8 +384,17 @@ export const Risk: React.FC = () => {
                 <span className="text-slate-500 font-bold">Simulasi Nambah Cicilan (Rp)</span>
                 <input
                   type="number"
+                  min={0}
                   value={simulatedCommitmentOffset}
-                  onChange={(e) => setSimulatedCommitmentOffset(Number(e.target.value) || 0)}
+                  onChange={(e) => {
+                    const val = Number(e.target.value) || 0
+                    setSimulatedCommitmentOffset(Math.max(0, val))
+                  }}
+                  onKeyDown={(e) => {
+                    if (e.key === '-' || e.key === 'e') {
+                      e.preventDefault()
+                    }
+                  }}
                   className="w-24 bg-white border border-slate-200 rounded px-1.5 py-0.5 text-[10px] text-right font-bold text-slate-700 focus:outline-none focus:border-emerald-500"
                 />
               </div>
@@ -376,21 +404,21 @@ export const Risk: React.FC = () => {
                 max={25000000}
                 step={250000}
                 value={simulatedCommitmentOffset}
-                onChange={(e) => setSimulatedCommitmentOffset(Number(e.target.value))}
+                onChange={(e) => setSimulatedCommitmentOffset(Math.max(0, Number(e.target.value)))}
                 className="w-full accent-emerald-500 h-1 bg-slate-200 rounded-lg cursor-pointer"
               />
             </div>
 
             {/* Smart Allocation recommendation banner */}
-            <div className="p-2.5 bg-emerald-50/60 border border-emerald-500/20 rounded-xl text-[10px] text-slate-650 leading-relaxed">
+            <div className="p-2.5 bg-emerald-50/60 border border-emerald-500/20 rounded-xl text-[10px] text-slate-655 leading-relaxed">
               <span className="font-bold text-emerald-700 block mb-0.5">💡 Smart Allocation Tracker:</span>
               {totals.allocationTip}
             </div>
 
-            {(simulatedIncomeOffset !== 0 || simulatedCommitmentOffset !== 0) && (
+            {(simulatedIncome !== income || simulatedCommitmentOffset !== 0) && (
               <button
                 onClick={() => {
-                  setSimulatedIncomeOffset(0)
+                  setSimulatedIncome(income)
                   setSimulatedCommitmentOffset(0)
                 }}
                 className="w-full py-1.5 bg-slate-100 border border-slate-200 hover:border-slate-300 text-[10px] text-slate-700 rounded-lg flex items-center justify-center gap-1.5 cursor-pointer transition-colors"
@@ -690,6 +718,58 @@ export const Risk: React.FC = () => {
           </div>
         </div>
       </div>
-    </div>
-  )
-}
+        
+      {/* Checklist Tindakan Darurat Modal */}
+        {showEmergencyModal && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/40 backdrop-blur-sm overflow-y-auto">
+            <div className="w-full max-w-lg bg-white p-6 md:p-8 rounded-3xl border border-slate-200 relative shadow-2xl animate-in fade-in zoom-in-95 duration-200">
+              <h3 className="text-lg font-bold text-slate-800 flex items-center gap-2 mb-4">
+                <span className="text-red-650">🚨</span> Panduan Tindakan Darurat Finansial
+              </h3>
+              <p className="text-xs text-slate-500 leading-relaxed mb-4">
+                DSR kamu menyentuh Zona Kritis (&gt;70%). Berikut adalah checklist taktis penyelesaian hutang darurat dari Zeth Finance:
+              </p>
+              
+              <div className="space-y-3.5 mb-6">
+                <div className="flex gap-3 items-start p-3 bg-red-50/50 border border-red-150 rounded-2xl">
+                  <input type="checkbox" className="mt-1 accent-red-600 rounded cursor-pointer" />
+                  <div>
+                    <h4 className="text-xs font-bold text-red-800">Stop Apply Paylater / Pinjaman Baru!</h4>
+                    <p className="text-[10px] text-slate-500 leading-relaxed mt-0.5">Hentikan total segala bentuk pengajuan cicilan baru demi mencegah spiral gali lubang tutup lubang.</p>
+                  </div>
+                </div>
+                <div className="flex gap-3 items-start p-3 bg-slate-50 border border-slate-200 rounded-2xl">
+                  <input type="checkbox" className="mt-1 accent-emerald-600 rounded cursor-pointer" />
+                  <div>
+                    <h4 className="text-xs font-bold text-slate-800">Hubungi Kreditur Untuk Restrukturisasi</h4>
+                    <p className="text-[10px] text-slate-500 leading-relaxed mt-0.5">Minta keringanan suku bunga, penghapusan denda, atau perpanjangan jangka waktu pelunasan.</p>
+                  </div>
+                </div>
+                <div className="flex gap-3 items-start p-3 bg-slate-50 border border-slate-200 rounded-2xl">
+                  <input type="checkbox" className="mt-1 accent-emerald-600 rounded cursor-pointer" />
+                  <div>
+                    <h4 className="text-xs font-bold text-slate-800">Cukur Pengeluaran Gaya Hidup Secara Agresif</h4>
+                    <p className="text-[10px] text-slate-500 leading-relaxed mt-0.5">Batalkan subscription berbayar, kurangi makan di luar, alokasikan penuh ke cicilan mendesak.</p>
+                  </div>
+                </div>
+                <div className="flex gap-3 items-start p-3 bg-slate-50 border border-slate-200 rounded-2xl">
+                  <input type="checkbox" className="mt-1 accent-emerald-600 rounded cursor-pointer" />
+                  <div>
+                    <h4 className="text-xs font-bold text-slate-800">Likuidasi Aset Non-Produktif Sementara</h4>
+                    <p className="text-[10px] text-slate-500 leading-relaxed mt-0.5">Jual atau gadaikan barang berharga non-essential untuk langsung menutup pokok tagihan terbesar.</p>
+                  </div>
+                </div>
+              </div>
+
+              <button
+                onClick={() => setShowEmergencyModal(false)}
+                className="w-full py-3 bg-slate-100 hover:bg-slate-200 border border-slate-200 font-bold text-slate-700 text-xs rounded-xl transition-colors cursor-pointer"
+              >
+                Mengerti & Siap Eksekusi
+              </button>
+            </div>
+          </div>
+        )}
+      </div>
+    )
+  }

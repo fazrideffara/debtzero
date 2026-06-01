@@ -19,7 +19,8 @@ import {
   Sparkles, 
   AlertTriangle,
   LayoutDashboard,
-  ArrowRight
+  ArrowRight,
+  Calendar
 } from 'lucide-react'
 import { Link } from 'react-router-dom'
 
@@ -29,6 +30,8 @@ export const Dashboard: React.FC = () => {
   const [income, setIncome] = useState(0)
   const [payments, setPayments] = useState<any[]>([])
   const [loadingConfig, setLoadingConfig] = useState(true)
+  const [currentDate, setCurrentDate] = useState(new Date())
+  const [selectedCalendarDate, setSelectedCalendarDate] = useState<string | null>(null)
 
   // 1. Fetch User Settings & Payments
   useEffect(() => {
@@ -183,6 +186,36 @@ export const Dashboard: React.FC = () => {
   }, [debts, payments, calculations.totalDebt])
 
   const globalRisk = calculations.urgentCount > 0 ? 'red' : calculations.dsrWarning ? 'yellow' : 'green'
+
+  const calendarDays = useMemo(() => {
+    const year = currentDate.getFullYear()
+    const month = currentDate.getMonth()
+    const firstDayOfMonth = new Date(year, month, 1)
+    const startDayOfWeek = firstDayOfMonth.getDay()
+    const daysInMonth = new Date(year, month + 1, 0).getDate()
+    
+    const days = []
+    for (let i = 0; i < startDayOfWeek; i++) {
+      days.push(null)
+    }
+    for (let d = 1; d <= daysInMonth; d++) {
+      days.push(new Date(year, month, d))
+    }
+    return days
+  }, [currentDate])
+
+  const getDebtsForDate = (date: Date) => {
+    const yyyy = date.getFullYear()
+    const mm = String(date.getMonth() + 1).padStart(2, '0')
+    const dd = String(date.getDate()).padStart(2, '0')
+    const dateStr = `${yyyy}-${mm}-${dd}`
+    return debts.filter(d => d.due_date === dateStr && d.status === 'active')
+  }
+
+  const debtsForSelectedDate = useMemo(() => {
+    if (!selectedCalendarDate) return []
+    return debts.filter(d => d.due_date === selectedCalendarDate && d.status === 'active')
+  }, [debts, selectedCalendarDate])
 
   if (loadingDebts || loadingConfig) {
     return (
@@ -362,6 +395,154 @@ export const Dashboard: React.FC = () => {
             <span>Buka Halaman Strategy</span>
             <ArrowRight size={14} />
           </Link>
+        </div>
+      </div>
+
+      {/* Calendar Visualizer Section */}
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mt-6">
+        {/* Calendar Widget Card */}
+        <div className="lg:col-span-2 glass-card p-6 rounded-3xl border border-slate-200 space-y-4">
+          <div className="flex items-center justify-between">
+            <h2 className="text-lg font-bold text-slate-800 flex items-center gap-2">
+              <Calendar className="text-emerald-500" />
+              Kalender Jatuh Tempo Tagihan
+            </h2>
+            <div className="flex items-center gap-3">
+              <button
+                onClick={() => {
+                  const prev = new Date(currentDate)
+                  prev.setMonth(currentDate.getMonth() - 1)
+                  setCurrentDate(prev)
+                  setSelectedCalendarDate(null)
+                }}
+                className="p-1.5 rounded-lg border border-slate-200 hover:bg-slate-50 text-slate-600 text-xs font-bold cursor-pointer"
+              >
+                &larr;
+              </button>
+              <span className="text-xs font-extrabold text-slate-700">
+                {currentDate.toLocaleDateString('id-ID', { month: 'long', year: 'numeric' })}
+              </span>
+              <button
+                onClick={() => {
+                  const next = new Date(currentDate)
+                  next.setMonth(currentDate.getMonth() + 1)
+                  setCurrentDate(next)
+                  setSelectedCalendarDate(null)
+                }}
+                className="p-1.5 rounded-lg border border-slate-200 hover:bg-slate-50 text-slate-600 text-xs font-bold cursor-pointer"
+              >
+                &rarr;
+              </button>
+            </div>
+          </div>
+          <hr className="border-slate-250/60 animate-pulse" />
+          
+          <div className="grid grid-cols-7 gap-1 text-center text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-2">
+            {['Min', 'Sen', 'Sel', 'Rab', 'Kam', 'Jum', 'Sab'].map(day => (
+              <div key={day} className="py-1">{day}</div>
+            ))}
+          </div>
+
+          <div className="grid grid-cols-7 gap-1.5">
+            {calendarDays.map((day, idx) => {
+              if (!day) return <div key={`empty-${idx}`} className="aspect-square bg-slate-50/30 rounded-xl"></div>
+              
+              const dayDebts = getDebtsForDate(day)
+              const hasDebts = dayDebts.length > 0
+              
+              const yyyy = day.getFullYear()
+              const mm = String(day.getMonth() + 1).padStart(2, '0')
+              const dd = String(day.getDate()).padStart(2, '0')
+              const dateStr = `${yyyy}-${mm}-${dd}`
+              
+              const isSelected = selectedCalendarDate === dateStr
+              
+              // Find most urgent debt color on this day
+              let dotColor = 'bg-emerald-500'
+              if (dayDebts.some(d => {
+                const remaining = Math.ceil((new Date(d.due_date!).getTime() - new Date().getTime()) / (1000 * 60 * 60 * 24))
+                return remaining < 3
+              })) {
+                dotColor = 'bg-rose-500'
+              } else if (dayDebts.some(d => {
+                const remaining = Math.ceil((new Date(d.due_date!).getTime() - new Date().getTime()) / (1000 * 60 * 60 * 24))
+                return remaining <= 7
+              })) {
+                dotColor = 'bg-amber-500'
+              }
+
+              return (
+                <button
+                  key={dateStr}
+                  onClick={() => hasDebts && setSelectedCalendarDate(dateStr)}
+                  className={`aspect-square rounded-2xl flex flex-col items-center justify-between p-2 relative transition-all border ${
+                    isSelected ? 'border-emerald-500 bg-emerald-50 text-emerald-800 font-extrabold ring-2 ring-emerald-500/20' :
+                    hasDebts ? 'border-slate-200 hover:border-emerald-500 hover:bg-emerald-50/20 text-slate-800 font-bold cursor-pointer shadow-sm' :
+                    'border-transparent text-slate-400 hover:bg-slate-100/50'
+                  }`}
+                >
+                  <span className="text-[11px]">{day.getDate()}</span>
+                  {hasDebts && (
+                    <span className={`w-1.5 h-1.5 rounded-full ${dotColor} absolute bottom-2`}></span>
+                  )}
+                </button>
+              )
+            })}
+          </div>
+        </div>
+
+        {/* Selected Date Detail panel */}
+        <div className="glass-card p-6 rounded-3xl border border-slate-200 flex flex-col justify-between">
+          <div className="space-y-4">
+            <h2 className="text-sm font-bold text-slate-500 uppercase tracking-widest">Detail Tanggal Jatuh Tempo</h2>
+            <hr className="border-slate-250/60" />
+            
+            {selectedCalendarDate ? (
+              <div className="space-y-3">
+                <p className="text-xs text-slate-700 font-bold">
+                  Tagihan Jatuh Tempo Pada: <span className="text-emerald-600">{new Date(selectedCalendarDate).toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' })}</span>
+                </p>
+                <div className="space-y-2.5 max-h-56 overflow-y-auto pr-1">
+                  {debtsForSelectedDate.map(debt => (
+                    <div key={debt.id} className="p-3 bg-slate-50 border border-slate-200 rounded-xl space-y-1.5 text-xs">
+                      <div className="flex justify-between items-center">
+                        <span className="font-extrabold text-slate-800">{debt.creditor_name}</span>
+                        <span className={`px-2 py-0.5 rounded text-[9px] font-extrabold uppercase ${
+                          debt.type === 'cicilan' ? 'bg-emerald-100 text-emerald-700' :
+                          debt.type === 'gadai' ? 'bg-amber-100 text-amber-700' :
+                          'bg-teal-100 text-teal-700'
+                        }`}>{debt.type}</span>
+                      </div>
+                      <div className="flex justify-between text-slate-550">
+                        <span>Sisa Tagihan:</span>
+                        <strong className="text-slate-700">{formatRupiah(debt.remaining_amount)}</strong>
+                      </div>
+                      {debt.interest_rate > 0 && (
+                        <div className="flex justify-between text-slate-500 text-[10px]">
+                          <span>Bunga:</span>
+                          <span>{debt.interest_rate}% / {debt.interest_period === '15days' ? '15 Hari' : 'Bulan'}</span>
+                        </div>
+                      )}
+                    </div>
+                  ))}
+                </div>
+              </div>
+            ) : (
+              <div className="text-center py-12 text-slate-400 space-y-2">
+                <Calendar size={32} className="mx-auto opacity-50" />
+                <p className="text-xs">Klik tanggal yang memiliki titik indikator untuk melihat rincian tagihan jatuh tempo.</p>
+              </div>
+            )}
+          </div>
+          
+          {selectedCalendarDate && (
+            <button
+              onClick={() => setSelectedCalendarDate(null)}
+              className="mt-6 w-full py-2 bg-slate-100 hover:bg-slate-250 border border-slate-200 text-xs font-bold text-slate-650 rounded-xl transition-all cursor-pointer text-center"
+            >
+              Reset Pilihan Tanggal
+            </button>
+          )}
         </div>
       </div>
     </div>

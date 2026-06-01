@@ -150,11 +150,11 @@ export const Login: React.FC = () => {
               <ShieldLogo size={36} />
             </div>
             <h1 className="text-3xl md:text-4xl font-extrabold text-slate-900 tracking-tight leading-tight">
-              Hadapi Kepala Dingin, <br />
-              <span className="bg-gradient-to-r from-emerald-600 to-teal-500 bg-clip-text text-transparent">Beresin Bareng BebasHutang.</span>
+              Tenang, Kita Beresin <br />
+              <span className="bg-gradient-to-r from-emerald-600 to-teal-500 bg-clip-text text-transparent">Cicilanmu Sampai Tuntas.</span>
             </h1>
-            <p className="text-slate-650 text-sm md:text-base leading-relaxed max-w-md mx-auto">
-              Satu tempat privat untuk hitung, rapihin, dan lepas dari jeratan cicilan tanpa dihakimi. Mulai langkah pertamamu menuju masa depan yang lebih lega hari ini.
+            <p className="text-slate-600 text-sm md:text-base leading-relaxed max-w-md mx-auto">
+              Tempat buat ngitung, rapihin, dan simulasiin jalan keluar dari jeratan utang secara terukur. Gak pake dihakimi, fokus kita cuma satu: Bantu kamu balik megang kendali penuh atas keuanganmu.
             </p>
             
             <div className="pt-6">
@@ -162,7 +162,7 @@ export const Login: React.FC = () => {
                 onClick={() => setStep('quiz')}
                 className="w-full py-4 bg-emerald-600 hover:bg-emerald-700 text-white font-bold rounded-2xl transition-all duration-200 shadow-lg shadow-emerald-600/20 hover:shadow-emerald-600/40 flex items-center justify-center gap-2 text-sm cursor-pointer hover:-translate-y-0.5 active:translate-y-0"
               >
-                <span>Mulai Hitung Solusinya (Gratis & Privat)</span>
+                <span>Mulai Hitung Solusinya (Gratis)</span>
                 <ArrowRight size={16} />
               </button>
             </div>

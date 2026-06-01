@@ -11,7 +11,6 @@ import {
   Filter, 
   Calendar, 
   AlertTriangle,
-  Info,
   Sparkles
 } from 'lucide-react'
 
@@ -286,11 +285,41 @@ export const Debts: React.FC = () => {
           <span className="text-slate-500 text-xs font-medium">Memuat daftar hutang...</span>
         </div>
       ) : filteredDebts.length === 0 ? (
-        <div className="glass-card p-12 rounded-3xl border border-slate-200 text-center">
-          <Info className="mx-auto text-slate-400 mb-3" size={32} />
-          <h2 className="text-slate-700 font-bold text-lg">Tidak ada catatan ditemukan</h2>
-          <p className="text-slate-500 text-xs mt-1 max-w-sm mx-auto">
-            Gunakan tombol "Tambah Hutang" untuk mendaftarkan cicilan, gadai, atau hutang personal Anda.
+        <div className="glass-card p-12 rounded-3xl border border-slate-200 text-center flex flex-col items-center justify-center space-y-4 shadow-md">
+          <div className="relative w-48 h-48 flex items-center justify-center">
+            <svg viewBox="0 0 200 200" className="w-full h-full animate-pulse duration-[4000ms]">
+              <defs>
+                <linearGradient id="grad-peace" x1="0%" y1="0%" x2="100%" y2="100%">
+                  <stop offset="0%" stopColor="#d1fae5" />
+                  <stop offset="100%" stopColor="#10b981" stopOpacity="0.1" />
+                </linearGradient>
+              </defs>
+              <circle cx="100" cy="100" r="70" fill="url(#grad-peace)" />
+              <path
+                d="M100 40 L150 60 V110 C150 145 125 165 100 170 C75 165 50 145 50 110 V60 Z"
+                fill="none"
+                stroke="#10b981"
+                strokeWidth="3.5"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              />
+              <path
+                d="M75 100 L93 118 L127 82"
+                fill="none"
+                stroke="#047857"
+                strokeWidth="4.5"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              />
+              <circle cx="45" cy="45" r="3" fill="#34d399" />
+              <circle cx="155" cy="155" r="3" fill="#34d399" />
+              <circle cx="150" cy="50" r="2" fill="#059669" />
+              <circle cx="50" cy="150" r="2" fill="#059669" />
+            </svg>
+          </div>
+          <h2 className="text-slate-800 font-extrabold text-lg">Catatan Hutang Masih Bersih</h2>
+          <p className="text-slate-500 text-xs max-w-sm mx-auto leading-relaxed">
+            Tidak ada tagihan atau hutang yang tercatat. Gunakan tombol <strong className="text-emerald-600 font-bold">Tambah Hutang</strong> secara manual atau <strong className="text-emerald-600 font-bold">Scan Tagihan (AI)</strong> untuk mulai mengorganisasikan cicilan Anda.
           </p>
         </div>
       ) : (
