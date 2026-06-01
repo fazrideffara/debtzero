@@ -11,7 +11,7 @@ import {
   Image as ImageIcon,
   AlertTriangle,
   CheckCircle2,
-  DollarSign
+  Coins
 } from 'lucide-react'
 
 
@@ -235,7 +235,7 @@ export const DebtDetailModal: React.FC<DebtDetailModalProps> = ({ debt, onClose,
           {debt.status === 'active' && (
             <div className="glass-panel p-5 rounded-2xl border border-slate-800/60 space-y-4">
               <h3 className="text-xs font-bold text-slate-400 uppercase tracking-widest flex items-center gap-1.5">
-                <DollarSign size={14} className="text-purple-400" />
+                <Coins size={14} className="text-purple-400" />
                 Input Pembayaran Baru
               </h3>
               <hr className="border-slate-800/65" />
