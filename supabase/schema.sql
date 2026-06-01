@@ -1,4 +1,4 @@
--- Database Schema for DebtZero
+-- Database Schema for BebasHutang
 -- Zeth Finance | Zeth Corporation
 
 -- Enable UUID extension

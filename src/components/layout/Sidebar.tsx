@@ -17,10 +17,10 @@ interface SidebarProps {
 export const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
   const menuItems = [
     { to: '/', label: 'Dashboard', icon: LayoutDashboard, id: 'sidebar-link-dashboard' },
-    { to: '/debts', label: 'My Debts', icon: CreditCard, id: 'sidebar-link-debts' },
-    { to: '/risk', label: 'Risk & Strategy', icon: ShieldAlert, id: 'sidebar-link-risk' },
-    { to: '/export', label: 'Reports & Export', icon: Download, id: 'sidebar-link-export' },
-    { to: '/settings', label: 'Settings', icon: Settings, id: 'sidebar-link-settings' },
+    { to: '/debts', label: 'Hutang Saya', icon: CreditCard, id: 'sidebar-link-debts' },
+    { to: '/risk', label: 'Risiko & Strategi', icon: ShieldAlert, id: 'sidebar-link-risk' },
+    { to: '/export', label: 'Laporan & Ekspor', icon: Download, id: 'sidebar-link-export' },
+    { to: '/settings', label: 'Pengaturan', icon: Settings, id: 'sidebar-link-settings' },
   ]
 
   const navLinkClass = ({ isActive }: { isActive: boolean }) => `
@@ -51,7 +51,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
       >
         {/* Mobile Close Button */}
         <div className="flex items-center justify-between md:hidden">
-          <span className="font-bold text-gradient-purple">Menu Navigation</span>
+          <span className="font-bold text-gradient-purple">Menu Navigasi</span>
           <button 
             onClick={onClose}
             className="p-1 rounded-lg hover:bg-slate-800/80 text-slate-400 hover:text-white"
@@ -64,7 +64,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
         {/* Brand Logo - Desktop Only */}
         <div className="hidden md:flex flex-col pb-2 border-b border-slate-800/45">
           <span className="text-2xl font-extrabold text-gradient-purple tracking-tight">
-            DebtZero
+            BebasHutang
           </span>
           <span className="text-[10px] text-slate-500 font-bold uppercase tracking-widest mt-1">
             Zeth Finance System

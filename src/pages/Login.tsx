@@ -145,7 +145,7 @@ export const Login: React.FC = () => {
               <span className="bg-gradient-to-r from-purple-400 to-pink-500 bg-clip-text text-transparent">Bebas Hutang</span>
             </h1>
             <p className="text-slate-300 text-sm md:text-base leading-relaxed max-w-md mx-auto">
-              Pusing dikejar pinjol? Kebanyakan cicilan paylater? Tenang, yuk beresin bareng <strong className="text-purple-400">DebtZero</strong> secara privat, cerdas, dan terstruktur.
+              Pusing dikejar pinjol? Kebanyakan cicilan paylater? Tenang, yuk beresin bareng <strong className="text-purple-400">BebasHutang</strong> secara privat, cerdas, dan terstruktur.
             </p>
             
             <div className="pt-4">
@@ -325,7 +325,7 @@ export const Login: React.FC = () => {
                 <ShieldCheck size={28} />
               </div>
               <h1 className="text-2xl font-extrabold text-slate-100 tracking-tight">
-                {isRegister ? 'Buat Akun Baru' : 'Masuk ke DebtZero'}
+                {isRegister ? 'Buat Akun Baru' : 'Masuk ke BebasHutang'}
               </h1>
               <p className="text-slate-400 text-xs mt-1.5 uppercase font-bold tracking-wider">
                 Zeth Finance Management System

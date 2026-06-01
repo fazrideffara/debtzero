@@ -1,5 +1,5 @@
 /**
- * Financial Calculation Engine for DebtZero
+ * Financial Calculation Engine for BebasHutang
  * Zeth Finance | Zeth Corporation
  */
 

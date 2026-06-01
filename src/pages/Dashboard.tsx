@@ -188,7 +188,7 @@ export const Dashboard: React.FC = () => {
     return (
       <div className="flex flex-col items-center justify-center py-24 gap-3">
         <div className="w-8 h-8 rounded-full border-4 border-purple-500/20 border-t-purple-500 animate-spin"></div>
-        <span className="text-slate-500 text-xs font-medium">Memuat dashboard DebtZero...</span>
+        <span className="text-slate-500 text-xs font-medium">Memuat dashboard BebasHutang...</span>
       </div>
     )
   }
@@ -333,7 +333,7 @@ export const Dashboard: React.FC = () => {
             <hr className="border-slate-800/80" />
             
             <p className="text-xs text-slate-400 leading-relaxed font-medium">
-              Sistem DebtZero mendeteksi Anda memiliki total sisa tagihan sebesar <strong className="text-slate-300 font-bold">{formatRupiah(calculations.totalDebt)}</strong>.
+              Sistem BebasHutang mendeteksi Anda memiliki total sisa tagihan sebesar <strong className="text-slate-300 font-bold">{formatRupiah(calculations.totalDebt)}</strong>.
             </p>
             
             {globalRisk === 'red' ? (

@@ -33,7 +33,7 @@ export const Navbar: React.FC<NavbarProps> = ({
         </button>
         <div className="flex flex-col">
           <span className="text-xl font-bold tracking-tight text-gradient-purple">
-            DebtZero
+            BebasHutang
           </span>
           <span className="text-[10px] text-slate-500 font-medium uppercase tracking-wider">
             by Zeth Finance
@@ -47,7 +47,7 @@ export const Navbar: React.FC<NavbarProps> = ({
         {dsrWarning && (
           <div className="flex items-center gap-1.5 px-3 py-1 rounded-full bg-rose-500/10 border border-rose-500/30 text-rose-400 text-xs font-medium animate-pulse">
             <ShieldAlert size={14} />
-            <span>High DSR Alert</span>
+            <span>Peringatan DSR Tinggi</span>
           </div>
         )}
 

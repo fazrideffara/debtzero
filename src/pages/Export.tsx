@@ -71,7 +71,7 @@ export const Export: React.FC = () => {
       const completedDebtsCount = debts.filter(d => d.status === 'completed').length
 
       const summaryData = [
-        { 'Detail Laporan': 'Ringkasan Laporan Hutang - DebtZero', 'Nilai': '' },
+        { 'Detail Laporan': 'Ringkasan Laporan Hutang - BebasHutang', 'Nilai': '' },
         { 'Detail Laporan': 'Tanggal Ekspor', 'Nilai': new Date().toLocaleDateString('id-ID') },
         { 'Detail Laporan': 'Total Outstanding Hutang', 'Nilai': formatRupiah(totalOutstanding) },
         { 'Detail Laporan': 'Jumlah Hutang Aktif', 'Nilai': activeDebtsCount },
@@ -116,7 +116,7 @@ export const Export: React.FC = () => {
       XLSX.utils.book_append_sheet(workbook, paymentsSheet, 'Riwayat Pembayaran')
 
       // Save workbook
-      XLSX.writeFile(workbook, `Laporan_Hutang_DebtZero_${Date.now()}.xlsx`)
+      XLSX.writeFile(workbook, `Laporan_Hutang_BebasHutang_${Date.now()}.xlsx`)
       setFeedbackMessage({ text: 'File Excel (XLSX) berhasil diekspor!', isError: false })
     } catch (err: any) {
       setFeedbackMessage({ text: `Gagal ekspor Excel: ${err.message || err}`, isError: true })
@@ -137,7 +137,7 @@ export const Export: React.FC = () => {
       doc.setFont('Helvetica', 'bold')
       doc.setFontSize(24)
       doc.setTextColor(139, 92, 246) // Purple
-      doc.text('DebtZero', 14, 20)
+      doc.text('BebasHutang', 14, 20)
 
       doc.setFontSize(10)
       doc.setTextColor(100, 116, 139)
@@ -209,11 +209,11 @@ export const Export: React.FC = () => {
       doc.setFont('Helvetica', 'italic')
       doc.setFontSize(8)
       doc.setTextColor(148, 163, 184)
-      doc.text('Laporan ini digenerate secara otomatis melalui platform privat DebtZero (Zeth Corporation).', 14, y)
+      doc.text('Laporan ini digenerate secara otomatis melalui platform privat BebasHutang (Zeth Corporation).', 14, y)
       doc.text('Semua kalkulasi dilakukan secara real-time dan terisolasi demi menjaga privasi data Anda.', 14, y + 4)
 
       // Save PDF file
-      doc.save(`Laporan_Hutang_DebtZero_${Date.now()}.pdf`)
+      doc.save(`Laporan_Hutang_BebasHutang_${Date.now()}.pdf`)
       setFeedbackMessage({ text: 'Laporan PDF berhasil diekspor!', isError: false })
     } catch (err: any) {
       setFeedbackMessage({ text: `Gagal ekspor PDF: ${err.message || err}`, isError: true })
