@@ -97,11 +97,17 @@ export const Dashboard: React.FC = () => {
   // 2. Memoized Financial Calculations (ZARA: Query efficiency and memoization to prevent re-renders)
   const calculations = useMemo(() => {
     // Total Current Outstanding
-    const totalDebt = debts.reduce((sum, d) => sum + d.remaining_amount, 0)
+    const totalDebt = debts.reduce((sum, d) => {
+      if (d.notes?.startsWith('[NON_UTANG]')) return sum
+      return sum + d.remaining_amount
+    }, 0)
 
     // Calculate Monthly Commitment for DSR
     const totalMonthlyCommitment = debts.reduce((sum, d) => {
       if (d.status === 'completed') return sum
+      if (d.notes?.startsWith('[NON_UTANG]')) {
+        return sum + d.principal_amount // Treat fixed non-utang expense as fixed commitment
+      }
       if (d.type === 'cicilan') {
         const baseInstallment = d.principal_amount / (d.tenor || 1)
         const interestInstallment = d.principal_amount * (d.interest_rate / 100)

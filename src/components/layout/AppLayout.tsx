@@ -10,19 +10,28 @@ export const AppLayout: React.FC = () => {
   const [loading, setLoading] = useState(true)
   const navigate = useNavigate()
 
-  useEffect(() => {
-    // Get current user session
+  const fetchUserSession = () => {
     supabase.auth.getSession().then(({ data: { session } }) => {
       setUser(session?.user ?? null)
       setLoading(false)
     })
+  }
+
+  useEffect(() => {
+    fetchUserSession()
 
     // Listen for auth state changes
     const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
       setUser(session?.user ?? null)
     })
 
-    return () => subscription.unsubscribe()
+    // Listen for custom profile updates
+    window.addEventListener('user-profile-updated', fetchUserSession)
+
+    return () => {
+      subscription.unsubscribe()
+      window.removeEventListener('user-profile-updated', fetchUserSession)
+    }
   }, [])
 
   const handleLogout = async () => {
@@ -42,7 +51,7 @@ export const AppLayout: React.FC = () => {
           <div className="absolute inset-0 rounded-full border-4 border-emerald-500/20"></div>
           <div className="absolute inset-0 rounded-full border-4 border-emerald-500 border-t-transparent animate-spin"></div>
         </div>
-        <p className="text-slate-500 text-sm font-medium tracking-wide animate-pulse">Loading Zeth Finance Platform...</p>
+        <p className="text-slate-550 text-sm font-medium tracking-wide animate-pulse">Loading Zeth Finance Platform...</p>
       </div>
     )
   }
@@ -53,6 +62,7 @@ export const AppLayout: React.FC = () => {
       <Navbar 
         userName={user?.user_metadata?.full_name || user?.email?.split('@')[0] || 'Zeth Member'}
         userEmail={user?.email || ''}
+        userAvatar={user?.user_metadata?.avatar_url}
         onLogout={handleLogout}
         toggleMobileSidebar={() => setMobileSidebarOpen(!mobileSidebarOpen)}
       />
@@ -63,6 +73,9 @@ export const AppLayout: React.FC = () => {
         <Sidebar 
           isOpen={mobileSidebarOpen} 
           onClose={() => setMobileSidebarOpen(false)} 
+          userName={user?.user_metadata?.full_name || user?.email?.split('@')[0] || 'Zeth Member'}
+          userEmail={user?.email || ''}
+          userAvatar={user?.user_metadata?.avatar_url}
         />
 
         {/* Content Outlet wrapper */}
@@ -75,3 +88,4 @@ export const AppLayout: React.FC = () => {
     </div>
   )
 }
+

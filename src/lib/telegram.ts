@@ -110,3 +110,47 @@ export const checkAndTriggerReminders = async (debts: any[], userId: string): Pr
     console.error('Terjadi kesalahan pada sistem reminder Telegram:', err)
   }
 }
+
+/**
+ * Sends a daily ping message to a Telegram chat with financial summary.
+ */
+export const sendDailyPingMessage = async (
+  token: string,
+  chatId: string,
+  debts: any[],
+  monthlyIncome: number
+): Promise<boolean> => {
+  // calculate total outstanding debt (excluding NON_UTANG)
+  const activeDebts = debts.filter(d => d.status === 'active')
+  const totalRemainingAmount = activeDebts.reduce((sum, d) => {
+    if (d.notes?.startsWith('[NON_UTANG]')) return sum
+    return sum + d.remaining_amount
+  }, 0)
+
+  // calculate monthly commitments (total monthly installment of debts)
+  const totalMonthlyCommitment = activeDebts.reduce((sum, d) => {
+    if (d.notes?.startsWith('[NON_UTANG]')) {
+      const baseInstallment = d.principal_amount / (d.tenor || 1)
+      const interestInstallment = d.principal_amount * (d.interest_rate / 100)
+      return sum + baseInstallment + interestInstallment
+    }
+    if (d.type === 'cicilan') {
+      const baseInstallment = d.principal_amount / (d.tenor || 1)
+      const interestInstallment = d.principal_amount * (d.interest_rate / 100)
+      return sum + baseInstallment + interestInstallment
+    }
+    if (d.type === 'gadai') {
+      return sum + (d.principal_amount * (d.interest_rate / 100) * 2)
+    }
+    return sum
+  }, 0)
+
+  const finalIncome = monthlyIncome <= 0 ? 0 : monthlyIncome
+  const monthlyAllocatable = Math.max(100000, finalIncome * 0.4 - totalMonthlyCommitment)
+  const monthsToFreedom = totalRemainingAmount > 0 ? Math.ceil(totalRemainingAmount / monthlyAllocatable) : 0
+
+  const message = `Halo Bos, pengingat harian. Sisa utang berjalanmu <b>${formatRupiah(totalRemainingAmount)}</b>. Menuju tanggal merdeka utangmu tinggal <b>${monthsToFreedom} bulan lagi</b>. Tetap semangat, kurangi jajan kopi hari ini! 💪`
+
+  return sendTelegramMessage(token, chatId, message)
+}
+

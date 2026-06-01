@@ -6,6 +6,7 @@ import { ShieldLogo } from './ShieldLogo'
 interface NavbarProps {
   userEmail?: string
   userName?: string
+  userAvatar?: string
   dsrWarning?: boolean
   onLogout: () => void
   toggleMobileSidebar: () => void
@@ -14,6 +15,7 @@ interface NavbarProps {
 export const Navbar: React.FC<NavbarProps> = ({
   userEmail,
   userName,
+  userAvatar,
   dsrWarning = false,
   onLogout,
   toggleMobileSidebar,
@@ -156,9 +158,19 @@ export const Navbar: React.FC<NavbarProps> = ({
               setShowProfile(!showProfile)
               setShowNotif(false)
             }}
-            className="w-8 h-8 rounded-full bg-emerald-600 flex items-center justify-center text-white font-bold text-sm shadow-md cursor-pointer hover:bg-emerald-700 transition-colors"
+            className="w-8 h-8 rounded-full overflow-hidden flex items-center justify-center text-white font-bold text-sm shadow-md cursor-pointer hover:scale-105 transition-transform"
           >
-            {userName ? userName.charAt(0).toUpperCase() : <User size={14} />}
+            {userAvatar ? (
+              <img src={userAvatar} alt="Avatar" className="w-full h-full object-cover" />
+            ) : userName ? (
+              <div className="w-full h-full bg-emerald-600 flex items-center justify-center">
+                {userName.charAt(0).toUpperCase()}
+              </div>
+            ) : (
+              <div className="w-full h-full bg-emerald-600 flex items-center justify-center">
+                <User size={14} />
+              </div>
+            )}
           </button>
 
           {/* Profile Dropdown Popover */}
@@ -166,8 +178,14 @@ export const Navbar: React.FC<NavbarProps> = ({
             <div className="absolute right-0 top-11 mt-2 w-64 bg-white border border-slate-200 rounded-2xl shadow-xl p-4 z-50 animate-in fade-in slide-in-from-top-2 duration-200">
               <div className="space-y-3">
                 <div className="pb-3 border-b border-slate-200 text-center">
-                  <div className="w-12 h-12 rounded-full bg-emerald-100 text-emerald-700 mx-auto flex items-center justify-center text-lg font-bold mb-2">
-                    {userName ? userName.charAt(0).toUpperCase() : 'Z'}
+                  <div className="w-12 h-12 rounded-full overflow-hidden mx-auto flex items-center justify-center border-2 border-emerald-500 shadow-sm mb-2">
+                    {userAvatar ? (
+                      <img src={userAvatar} alt="Avatar" className="w-full h-full object-cover" />
+                    ) : (
+                      <div className="w-full h-full bg-emerald-100 text-emerald-700 flex items-center justify-center text-lg font-bold">
+                        {userName ? userName.charAt(0).toUpperCase() : 'Z'}
+                      </div>
+                    )}
                   </div>
                   <h3 className="text-sm font-bold text-slate-800">{userName || 'Zeth Member'}</h3>
                   <p className="text-[10px] text-slate-500 truncate mt-0.5">{userEmail}</p>

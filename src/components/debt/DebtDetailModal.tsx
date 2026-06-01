@@ -167,14 +167,19 @@ export const DebtDetailModal: React.FC<DebtDetailModalProps> = ({ debt, onClose,
         <div className="space-y-6">
           <div>
             <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full uppercase tracking-wider ${
+              debt.notes?.startsWith('[NON_UTANG]') ? 'bg-slate-500/10 text-slate-400' :
               debt.type === 'cicilan' ? 'bg-indigo-500/10 text-indigo-400' :
               debt.type === 'gadai' ? 'bg-amber-500/10 text-amber-400' :
               'bg-purple-500/10 text-purple-400'
             }`}>
-              {debt.type === 'cicilan' ? 'Cicilan Bulanan' : debt.type === 'gadai' ? 'Gadai' : 'Personal'}
+              {debt.notes?.startsWith('[NON_UTANG]') ? 'Non-Utang (Fixed Expense)' : debt.type === 'cicilan' ? 'Cicilan Bulanan' : debt.type === 'gadai' ? 'Gadai' : 'Personal'}
             </span>
             <h2 className="text-2xl font-extrabold text-slate-100 tracking-tight mt-2">{debt.creditor_name}</h2>
-            {debt.notes && <p className="text-xs text-slate-400 mt-2 bg-slate-900/50 p-3 rounded-xl border border-slate-800/50 font-medium italic">{debt.notes}</p>}
+            {debt.notes && (
+              <p className="text-xs text-slate-400 mt-2 bg-slate-900/50 p-3 rounded-xl border border-slate-800/50 font-medium italic">
+                {debt.notes.startsWith('[NON_UTANG]') ? debt.notes.replace('[NON_UTANG] ', '') : debt.notes}
+              </p>
+            )}
           </div>
 
           {/* Core Info Specs */}

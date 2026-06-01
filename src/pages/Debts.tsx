@@ -27,6 +27,7 @@ export const Debts: React.FC = () => {
 
   // Form states
   const [type, setType] = useState<'cicilan' | 'gadai' | 'personal'>('cicilan')
+  const [isNonUtang, setIsNonUtang] = useState(false)
   const [creditorName, setCreditorName] = useState('')
   const [principalAmount, setPrincipalAmount] = useState('')
   const [interestRate, setInterestRate] = useState('')
@@ -44,6 +45,7 @@ export const Debts: React.FC = () => {
   const handleTypeChange = (newType: 'cicilan' | 'gadai' | 'personal') => {
     setType(newType)
     setValidationError('')
+    setIsNonUtang(false)
     if (newType === 'gadai') {
       setInterestPeriod('15days')
       setTenorUnit('days')
@@ -120,18 +122,19 @@ export const Debts: React.FC = () => {
     }
 
     try {
+      const finalNotes = isNonUtang ? `[NON_UTANG] ${notes}` : notes
       await addDebt({
         type,
         creditor_name: creditorName,
         principal_amount: principal,
         remaining_amount: principal, // remaining initially matches principal
-        interest_rate: type === 'personal' ? 0 : rate,
+        interest_rate: type === 'personal' || isNonUtang ? 0 : rate,
         interest_period: interestPeriod,
         start_date: startDate,
         due_date: finalDueDate,
         tenor: parsedTenor,
         tenor_unit: tenorUnit,
-        notes: notes || null,
+        notes: finalNotes || null,
       })
 
       // Reset Form & Close Modal
@@ -141,6 +144,7 @@ export const Debts: React.FC = () => {
       setTenor('')
       setNotes('')
       setDueDate('')
+      setIsNonUtang(false)
       setIsModalOpen(false)
     } catch (err: any) {
       setValidationError(err.message || 'Gagal menyimpan data hutang.')
@@ -347,11 +351,12 @@ export const Debts: React.FC = () => {
                   {/* Type Badge & Actions */}
                   <div className="flex items-center justify-between mb-4">
                     <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full uppercase tracking-wider ${
+                      debt.notes?.startsWith('[NON_UTANG]') ? 'bg-slate-100 text-slate-700 border border-slate-200' :
                       debt.type === 'cicilan' ? 'bg-emerald-100 text-emerald-700' :
                       debt.type === 'gadai' ? 'bg-amber-100 text-amber-700' :
                       'bg-teal-100 text-teal-700'
                     }`}>
-                      {debt.type === 'cicilan' ? 'Cicilan' : debt.type === 'gadai' ? 'Gadai' : 'Personal'}
+                      {debt.notes?.startsWith('[NON_UTANG]') ? 'Non-Utang' : debt.type === 'cicilan' ? 'Cicilan' : debt.type === 'gadai' ? 'Gadai' : 'Personal'}
                     </span>
                     <button
                       id={`delete-debt-${debt.id}`}
@@ -515,9 +520,10 @@ export const Debts: React.FC = () => {
                       type="number"
                       step="0.01"
                       required
-                      value={interestRate}
+                      disabled={isNonUtang}
+                      value={isNonUtang ? '0' : interestRate}
                       onChange={(e) => setInterestRate(e.target.value)}
-                      className="w-full bg-white border border-slate-200 rounded-xl px-4 py-3 text-slate-800 placeholder-slate-400 focus:outline-none focus:border-emerald-500 transition-colors text-sm"
+                      className="w-full bg-white border border-slate-200 rounded-xl px-4 py-3 text-slate-800 placeholder-slate-400 focus:outline-none focus:border-emerald-500 transition-colors text-sm disabled:opacity-50"
                       placeholder="1.2"
                     />
                   </div>
@@ -548,6 +554,27 @@ export const Debts: React.FC = () => {
                       />
                     )}
                   </div>
+                </div>
+              )}
+
+              {/* Checkbox for Non-Utang fixed expense */}
+              {type === 'cicilan' && (
+                <div className="flex items-center gap-2 p-3 bg-slate-50 border border-slate-200 rounded-xl">
+                  <input
+                    type="checkbox"
+                    id="checkbox-non-utang"
+                    checked={isNonUtang}
+                    onChange={(e) => {
+                      setIsNonUtang(e.target.checked)
+                      if (e.target.checked) {
+                        setInterestRate('0')
+                      }
+                    }}
+                    className="accent-emerald-600 rounded cursor-pointer"
+                  />
+                  <label htmlFor="checkbox-non-utang" className="text-xs text-slate-700 font-bold cursor-pointer select-none">
+                    Catat sebagai "Cicilan Non-Utang" (Langganan Netflix, Spotify, Gym, internet, dll.)
+                  </label>
                 </div>
               )}
 

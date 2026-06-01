@@ -28,7 +28,7 @@ export const Risk: React.FC = () => {
   const { debts, loading: loadingDebts } = useDebts()
   const [income, setIncome] = useState(0)
   const [loadingConfig, setLoadingConfig] = useState(true)
-  const [selectedStrategy, setSelectedStrategy] = useState<'snowball' | 'avalanche'>('snowball')
+  const [selectedStrategy, setSelectedStrategy] = useState<'snowball' | 'avalanche' | 'mental-health'>('snowball')
 
   // Interactive DSR Simulator state
   const [simulatedIncome, setSimulatedIncome] = useState<number>(0)
@@ -75,6 +75,9 @@ export const Risk: React.FC = () => {
 
   const totals = useMemo(() => {
     const totalMonthlyCommitment = activeDebts.reduce((sum, d) => {
+      if (d.notes?.startsWith('[NON_UTANG]')) {
+        return sum + d.principal_amount
+      }
       if (d.type === 'cicilan') {
         const baseInstallment = d.principal_amount / (d.tenor || 1)
         const interestInstallment = d.principal_amount * (d.interest_rate / 100)
@@ -95,7 +98,10 @@ export const Risk: React.FC = () => {
     // Merdeka Month = total remaining debts / sisa dana dingin bulanan (income - expense - commitment)
     // For calculation, let's assume average expense is 50% of income if not fetched, or we can fetch monthly_expense
     // Let's calculate based on simulated values: sisa dana dingin = finalIncome - finalCommitment
-    const totalRemainingAmount = activeDebts.reduce((sum, d) => sum + d.remaining_amount, 0)
+    const totalRemainingAmount = activeDebts.reduce((sum, d) => {
+      if (d.notes?.startsWith('[NON_UTANG]')) return sum
+      return sum + d.remaining_amount
+    }, 0)
     const monthlyAllocatable = Math.max(100000, finalIncome * 0.4 - finalCommitment) // assume 40% income is allocatable to speed up payoff
     const monthsToFreedom = totalRemainingAmount > 0 ? Math.ceil(totalRemainingAmount / monthlyAllocatable) : 0
     
@@ -132,6 +138,30 @@ export const Risk: React.FC = () => {
 
   const avalancheList = useMemo(() => {
     return [...activeDebts].sort((a, b) => b.interest_rate - a.interest_rate)
+  }, [activeDebts])
+
+  const mentalHealthList = useMemo(() => {
+    return [...activeDebts].sort((a, b) => {
+      const isAPriority = 
+        a.type === 'personal' || 
+        a.creditor_name.toLowerCase().includes('pinjol') || 
+        a.creditor_name.toLowerCase().includes('paylater') || 
+        a.creditor_name.toLowerCase().includes('fintech') || 
+        (a.notes && a.notes.toLowerCase().includes('pinjol')) || 
+        (a.notes && a.notes.toLowerCase().includes('paylater'))
+
+      const isBPriority = 
+        b.type === 'personal' || 
+        b.creditor_name.toLowerCase().includes('pinjol') || 
+        b.creditor_name.toLowerCase().includes('paylater') || 
+        b.creditor_name.toLowerCase().includes('fintech') || 
+        (b.notes && b.notes.toLowerCase().includes('pinjol')) || 
+        (b.notes && b.notes.toLowerCase().includes('paylater'))
+
+      if (isAPriority && !isBPriority) return -1
+      if (!isAPriority && isBPriority) return 1
+      return a.remaining_amount - b.remaining_amount
+    })
   }, [activeDebts])
 
   // 3. Simulator calculations
@@ -454,13 +484,21 @@ export const Risk: React.FC = () => {
                   >
                     Avalanche
                   </button>
+                  <button
+                    onClick={() => setSelectedStrategy('mental-health')}
+                    className={`px-2.5 py-1 rounded-md text-[9px] font-extrabold uppercase tracking-wider transition-all cursor-pointer ${
+                      selectedStrategy === 'mental-health' ? 'bg-emerald-600 text-white' : 'text-slate-500 hover:text-slate-800'
+                    }`}
+                  >
+                    Mental Health
+                  </button>
                 </div>
               </div>
             </div>
             
             <hr className="border-slate-200" />
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
               {/* Method A Info */}
               <div className={`p-4 rounded-2xl border transition-all ${
                 selectedStrategy === 'snowball' ? 'bg-emerald-50 border-emerald-500/30' : 'bg-slate-50 border-slate-200'
@@ -475,7 +513,7 @@ export const Risk: React.FC = () => {
                 <div className="space-y-1.5 max-h-[140px] overflow-y-auto pr-1">
                   {snowballList.map((item, idx) => (
                     <div key={item.id} className="bg-white p-2 rounded-lg border border-slate-200 flex items-center justify-between text-[11px]">
-                      <span className="text-slate-500 font-bold">#{idx + 1} {item.creditor_name}</span>
+                      <span className="text-slate-500 font-bold truncate max-w-[120px]">#{idx + 1} {item.creditor_name}</span>
                       <span className="text-slate-800 font-semibold">{formatRupiah(item.remaining_amount)}</span>
                     </div>
                   ))}
@@ -497,11 +535,42 @@ export const Risk: React.FC = () => {
                 <div className="space-y-1.5 max-h-[140px] overflow-y-auto pr-1">
                   {avalancheList.map((item, idx) => (
                     <div key={item.id} className="bg-white p-2 rounded-lg border border-slate-200 flex items-center justify-between text-[11px]">
-                      <span className="text-slate-500 font-bold">#{idx + 1} {item.creditor_name}</span>
+                      <span className="text-slate-500 font-bold truncate max-w-[120px]">#{idx + 1} {item.creditor_name}</span>
                       <span className="text-slate-800 font-semibold">{item.type === 'personal' ? '0%' : `${item.interest_rate}%`}</span>
                     </div>
                   ))}
                   {avalancheList.length === 0 && <span className="text-[11px] text-slate-500 italic">Tidak ada hutang aktif</span>}
+                </div>
+              </div>
+
+              {/* Method C Info (Mental Health Priority) */}
+              <div className={`p-4 rounded-2xl border transition-all ${
+                selectedStrategy === 'mental-health' ? 'bg-emerald-50 border-emerald-500/30' : 'bg-slate-50 border-slate-200'
+              }`}>
+                <div className="flex items-center gap-2 mb-2">
+                  <span className="text-emerald-600 text-xs">🧠</span>
+                  <span className="text-xs font-bold text-slate-800">Mental Health 🛡️ (Beresin Pinjol & Sosial)</span>
+                </div>
+                <p className="text-[11px] text-slate-550 leading-relaxed mb-3">
+                  Alokasikan dana pertama untuk melunasi Pinjol, Paylater, atau hutang Personal (Keluarga/Teman) demi meredam stres psikologis dan menjaga hubungan sosial.
+                </p>
+                <div className="space-y-1.5 max-h-[140px] overflow-y-auto pr-1">
+                  {mentalHealthList.map((item, idx) => {
+                    const isPriority = 
+                      item.type === 'personal' || 
+                      item.creditor_name.toLowerCase().includes('pinjol') || 
+                      item.creditor_name.toLowerCase().includes('paylater') || 
+                      item.creditor_name.toLowerCase().includes('fintech')
+                    return (
+                      <div key={item.id} className={`p-2 rounded-lg border flex items-center justify-between text-[11px] ${
+                        isPriority ? 'bg-rose-50 border-rose-200 text-rose-700 font-bold' : 'bg-white border-slate-200 text-slate-800'
+                      }`}>
+                        <span className="truncate max-w-[100px]">#{idx + 1} {item.creditor_name}</span>
+                        <span className="text-[9px] uppercase font-bold px-1 py-0.5 rounded bg-slate-100">{isPriority ? '🚨 Prioritas' : item.type}</span>
+                      </div>
+                    )
+                  })}
+                  {mentalHealthList.length === 0 && <span className="text-[11px] text-slate-500 italic">Tidak ada hutang aktif</span>}
                 </div>
               </div>
             </div>
@@ -509,7 +578,7 @@ export const Risk: React.FC = () => {
             <div className="p-3 bg-emerald-50 border border-emerald-200 rounded-xl flex gap-2">
               <Sparkles className="text-emerald-600 shrink-0 mt-0.5" size={14} />
               <p className="text-[11px] text-slate-650 leading-relaxed">
-                <strong>Saran Zeth Finance:</strong> Pilih metode <strong className="text-slate-900">Avalanche</strong> kalau kamu mau hemat total pembayaran bunga, atau pilih metode <strong className="text-slate-900">Snowball</strong> kalau kamu butuh dorongan mental dengan melunasi tagihan-tagihan kecil satu per satu secara cepat.
+                <strong>Saran Zeth Finance:</strong> Pilih metode <strong className="text-slate-900">Mental Health</strong> jika Anda menghadapi tekanan penagihan pinjol / menjaga hubungan sosial, metode <strong className="text-slate-900">Avalanche</strong> untuk menghemat biaya bunga secara matematis, atau <strong className="text-slate-900">Snowball</strong> untuk motivasi psikologis.
               </p>
             </div>
           </div>
